@@ -1,0 +1,37 @@
+# Core AI / Agent orchestration
+langgraph>=0.2.0
+langchain>=0.3.0
+langchain-openai>=0.3.0
+langchain-core>=0.3.0
+
+# Observability
+langfuse>=2.0.0
+
+# Dashboard
+streamlit>=1.40.0
+
+# ML / Data Science
+xgboost>=2.1.0
+scikit-learn>=1.5.0
+pandas>=2.2.0
+numpy>=1.26.0
+joblib>=1.4.0
+
+# Data validation
+pydantic>=2.0.0
+
+# Graph / network analysis
+networkx>=3.3
+
+# Visualization
+plotly>=5.24.0
+
+# RAG / Vector Store
+chromadb>=0.4.13
+sentence-transformers>=2.2.0
+
+# Config
+python-dotenv>=1.0.0
+
+# Caching (production -- prototype uses in-memory)
+redis>=5.0.0

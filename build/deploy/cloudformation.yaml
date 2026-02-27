@@ -1,0 +1,82 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  One-click deployment of the AML Investigation Command Center.
+  Launches an EC2 instance, installs Docker, clones the repo, and starts the dashboard.
+
+Parameters:
+  GitHubRepoURL:
+    Type: String
+    Description: HTTPS URL of your GitHub repository
+    Default: https://github.com/youruser/wealthsimple-aml-agent.git
+
+  InstanceType:
+    Type: String
+    Default: t3.small
+    AllowedValues: [t3.micro, t3.small, t3.medium]
+    Description: EC2 instance size (t3.small recommended)
+
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: EC2 key pair for SSH access
+
+Resources:
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: AML Dashboard - Streamlit + SSH
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 8501
+          ToPort: 8501
+          CidrIp: 0.0.0.0/0
+          Description: Streamlit dashboard
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+          Description: SSH access
+
+  Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref KeyName
+      ImageId: ami-0c7217cdde317cfec  # Ubuntu 22.04 LTS us-east-1 (update for your region)
+      SecurityGroupIds:
+        - !GetAtt SecurityGroup.GroupId
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs:
+            VolumeSize: 20
+            VolumeType: gp3
+      Tags:
+        - Key: Name
+          Value: AML-Investigation-Dashboard
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          set -euo pipefail
+          exec > /var/log/aml-deploy.log 2>&1
+
+          apt-get update -y
+          apt-get install -y docker.io docker-compose-plugin git curl
+
+          systemctl enable docker
+          systemctl start docker
+
+          git clone ${GitHubRepoURL} /opt/aml-dashboard
+          cd /opt/aml-dashboard
+          cp .env.example .env
+
+          docker compose up --build -d
+
+          echo "Deployment complete" > /tmp/deploy-status.txt
+
+Outputs:
+  DashboardURL:
+    Description: URL to access the AML Investigation Dashboard
+    Value: !Sub http://${Instance.PublicIp}:8501
+
+  SSHCommand:
+    Description: SSH into the instance
+    Value: !Sub ssh -i your-key.pem ubuntu@${Instance.PublicIp}

@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.env
+*.egg-info/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+*.joblib
+dist/
+build/build/
+build/dist/
+*.egg
+
+# Large generated data (regenerated on deploy)
+build/src/data/sample/*.json
+
+# Model artifacts (retrained on deploy)
+build/models/*.joblib
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,58 @@
+{
+  "cv_metrics": {
+    "precision": {
+      "mean": 1.0,
+      "std": 0.0
+    },
+    "recall": {
+      "mean": 0.9371794871794872,
+      "std": 0.08996310150178888
+    },
+    "f1": {
+      "mean": 0.9652173913043478,
+      "std": 0.050703929520393924
+    }
+  },
+  "top_features": [
+    [
+      "total_amount",
+      0.3759806454181671
+    ],
+    [
+      "max_single_amount",
+      0.29300230741500854
+    ],
+    [
+      "txn_time_span_hours",
+      0.21996624767780304
+    ],
+    [
+      "mean_amount",
+      0.06651771813631058
+    ],
+    [
+      "severity_score",
+      0.019351759925484657
+    ],
+    [
+      "std_amount",
+      0.018044276162981987
+    ],
+    [
+      "amount_to_income_ratio",
+      0.006634806748479605
+    ],
+    [
+      "velocity_ratio_30d",
+      0.0005021917168051004
+    ],
+    [
+      "alert_type_encoded",
+      0.0
+    ],
+    [
+      "triggered_txn_count",
+      0.0
+    ]
+  ]
+}
