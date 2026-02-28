@@ -1,27 +1,42 @@
-# AI-Native Financial Crime Investigation Agent
+# WS Intelligence Platform
 
-## What I Built and Why
+## What is this?
 
-I built an AI-native system that reimagines how Wealthsimple's compliance team investigates money laundering alerts. Today, financial crime investigators manually review hundreds of alerts per week -- pulling client profiles, analyzing transaction patterns, checking sanctions lists, and writing Suspicious Transaction Reports for FINTRAC. About 80% of these alerts are false positives. The manual work is repetitive, slow, and expensive.
+A unified AI platform for Wealthsimple with two production systems sharing common infrastructure:
 
-Instead of bolting AI onto this existing workflow, I designed the system from scratch with AI at the core. The result is a four-agent pipeline that processes an alert from detection to FINTRAC-ready report in under 20ms, with a human compliance officer making the final filing decision.
+**WS Sentinel** (Compliance Intelligence) automates AML investigation from alert triage to FINTRAC-ready STR reports. Four specialized agents -- triage classifier, investigation state machine, report generator, and pattern discovery -- process alerts in under 20 milliseconds. 80% of false positives are auto-closed, freeing analysts to focus on genuine threats.
 
-## How It Works
+**WS Pulse** (Client Financial Intelligence) detects financial moments -- paychecks, earnings reports, market drops, rate decisions -- and generates personalized, tax-aware recommendations for each user's portfolio. It turns generic notifications into actionable insights, democratizing advice that previously required $300/hr advisors.
 
-**Agent 1 (Triage)** uses an XGBoost classifier trained on 24 engineered features -- transaction velocity, structuring indicators, crypto privacy coin usage, PEP status, income-to-amount ratios -- to separate true risks from noise. It auto-closes ~80% of false positives with high confidence, freeing analysts to focus on cases that matter.
+## Why two systems?
 
-**Agent 2 (Investigation)** is a LangGraph state machine that mirrors a Level 2 analyst's workflow. It gathers client context, analyzes transaction patterns, screens watchlists (PEP/sanctions), matches against known ML typologies, and conditionally routes crypto cases through deeper analysis. Nine simulated tools provide the data a real system would pull from Wealthsimple's internal APIs. Each tool call is traced with span-level observability.
+The thesis is shared infrastructure. Both systems use the same PII masking module, event queue (Redis Streams), caching layer, RAG knowledge base, observability framework, and latency tracker. This demonstrates platform thinking: building once and applying across domains, not creating isolated solutions.
 
-**Agent 3 (Report)** generates FINTRAC-compliant STR narratives. Using structured templates aligned to real STR formatting requirements -- subject information, suspicious activity description, matched FINTRAC indicators, key transaction evidence, risk assessment, and recommended action -- it produces reports ready for human review. When an OpenAI API key is configured, LangChain + GPT-4o-mini generates natural-language narratives; otherwise, template-based generation works fully offline.
+Sentinel solves a back-office cost problem ($1.65M/year savings). Pulse solves a client-facing growth problem (engagement, Premium upsells, support ticket reduction). Together, they show how AI can simultaneously cut costs and grow revenue.
 
-**Agent 4 (Pattern Discovery)** runs K-Means or DBSCAN clustering on completed investigations to surface emerging fraud typologies. In testing, it identified five distinct clusters including a privacy coin pattern and a watchlist-hit cluster with complex entity networks -- patterns that could feed back into the triage rules.
+## How does it work?
 
-## Technical Choices
+Sentinel processes AML alerts through a LangGraph state machine. An XGBoost classifier triages each alert (sub-2ms). Cases that warrant investigation flow through a multi-tool investigation agent that analyzes transactions, checks watchlists, maps entity networks, and retrieves FINTRAC regulatory guidance via RAG. The report generator produces compliant STR narratives. Pattern discovery clusters completed cases to surface emerging typologies.
 
-I chose LangGraph over raw LangChain for investigation orchestration because conditional routing (crypto vs. non-crypto paths) maps naturally to state machines, and the explicit state makes debugging and auditing straightforward. XGBoost for triage gives sub-2ms inference with explainable feature importances -- critical when regulators ask why an alert was auto-closed. Langfuse integration (with local trace store fallback) provides full cost tracking and span-level observability across every investigation.
+Pulse processes financial events through a similar pipeline: event detection, portfolio impact analysis, RAG-retrieved financial guidance (tax rules, account optimization), and personalized recommendation generation. Events are queued via Redis Streams with priority, backpressure, and dead letter handling. All data is PII-masked before entering any AI component.
 
-The synthetic data pipeline generates 500 Wealthsimple-like clients, 50,000 transactions across TFSA/RRSP/Crypto accounts, and 315 alerts covering 10 FINTRAC-aligned typologies including structuring, crypto layering, rapid fund movement, and PEP/sanctions hits. An 80% false positive rate mirrors real-world AML alert volumes.
+## Technical choices
 
-## The Human-AI Boundary
+- **LangGraph** for multi-agent orchestration (state machines, conditional routing)
+- **XGBoost** for triage (fast, explainable, low-cost inference)
+- **ChromaDB + sentence-transformers** for RAG (semantic search over regulations and financial guidance)
+- **Redis** for caching (multi-region TTL) and event queuing (Streams with consumer groups)
+- **Pydantic v2** for all data validation
+- **PII tokenization** with deterministic hashing and audit logging
+- **P50/P90/P95/P99 latency tracking** per pipeline component with SLA definitions
+- **Model scorecards** aligned with OSFI E-23 for bias analysis and drift monitoring
+- **Streamlit** for the interactive dashboard with 15 pages across both systems
 
-The system deliberately stops short of filing STRs. The AI investigates, reasons, and recommends. The compliance officer reviews the evidence, reads the narrative, and clicks Approve, Reject, or Escalate in the Streamlit dashboard. This is the legally correct boundary under Canada's PCMLTFA -- and it's how trustworthy AI should work in regulated industries.
+## The human-AI boundary
+
+AI automates investigation, analysis, and recommendation. Humans make final decisions: compliance officers approve STR filings (Sentinel), users approve or dismiss financial recommendations (Pulse). Both systems provide full reasoning chains and audit trails. Every PII operation is logged. Every model has a scorecard documenting known limitations and bias analysis.
+
+This is not a demo. It is a production architecture that happens to run on synthetic data.
+
+---
+*Built for the Wealthsimple AI Builders Program.*

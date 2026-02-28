@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 """
-End-to-end demo: AI-Native Financial Crime Investigation Agent
-==============================================================
+End-to-end demo: WS Intelligence Platform
+==========================================
 
-This script demonstrates the complete pipeline that Wealthsimple's
-compliance team would interact with. It walks through every stage
-of an AML investigation, from raw alert to FINTRAC-ready STR report,
-showing the AI's reasoning at each step.
+Demonstrates both WS Sentinel (AML compliance) and WS Pulse (client
+financial intelligence) pipelines, including shared production
+infrastructure (PII masking, event queuing, latency tracking).
 
 Run:  python scripts/demo.py
 """
@@ -272,19 +271,79 @@ def main():
     demo_observability()
     demo_human_ai_boundary()
 
+    # ── WS Pulse Demo ──
+    demo_pulse()
+
     print_header("DEMO COMPLETE")
     print("""
   To explore interactively:
     streamlit run src/dashboard/app.py
 
-  Dashboard pages:
-    1. Pipeline   -- Run alerts, see disposition pie chart
-    2. Alert Queue -- Expandable investigation cards
-    3. Report Review -- STR narratives with Approve/Reject/Escalate
-    4. Metrics    -- Triage confidence, risk distribution, latency
-    5. Traces     -- Per-investigation span analysis, cost breakdown
-    6. Patterns   -- K-Means/DBSCAN cluster explorer with PCA scatter
+  Dashboard sections:
+    SENTINEL  -- AML investigation pipeline
+    PULSE     -- Client financial intelligence
+    SHARED    -- Production metrics, model scorecards, RAG, observability
 """)
+
+
+def demo_pulse():
+    """Demonstrate WS Pulse financial event processing."""
+    print_header("WS PULSE: CLIENT FINANCIAL INTELLIGENCE")
+    print()
+
+    from src.pulse.orchestrator import PulseOrchestrator
+    from src.shared.pii import pii_masker
+    from src.shared.queue import event_queue
+    from src.shared.latency import latency_tracker
+
+    pulse = PulseOrchestrator()
+
+    print(f"  Portfolios loaded: {len(pulse.portfolios)}")
+    print(f"  Financial events: {len(pulse.events)}")
+    print()
+
+    for p in pulse.portfolios[:3]:
+        print(f"  {p.display_name} ({p.age}, {p.province}) -- ${p.total_value:,.0f}")
+        print(f"    Accounts: {len(p.accounts)} | Holdings: {len(p.all_holdings)}")
+        print(f"    Risk: {p.goals.risk_profile.value} | Premium: {p.goals.has_premium}")
+        print()
+
+    print(f"  {THIN}")
+    print(f"  Processing events (max 15)...")
+    print()
+
+    results = pulse.process_all_events(max_events=15)
+
+    print(f"  Results: {len(results)} recommendations generated")
+    print()
+
+    for r in results[:5]:
+        rec = r.recommendation
+        if rec:
+            print(f"  [{rec.priority.value.upper()}] {rec.title}")
+            print(f"    User: {r.user_id} | Action: {rec.action.value}")
+            print(f"    Confidence: {rec.confidence:.0%} | Value: ${rec.estimated_value_cad:,.2f}")
+            print(f"    Time: {r.processing_time_ms:.1f}ms | Cache: {r.cache_hit}")
+            print()
+
+    stats = pulse.stats
+    print(f"  {THIN}")
+    print(f"  Pipeline Stats:")
+    print(f"    Total processed: {stats['total_processed']}")
+    print(f"    Avg time: {stats.get('avg_processing_time_ms', 0):.1f}ms")
+    print(f"    Cache hit rate: {stats.get('cache_hit_rate', 0):.1f}%")
+    print(f"    Total est. value: ${stats.get('total_estimated_value_cad', 0):,.0f}")
+    print()
+
+    print(f"  Shared Infrastructure Stats:")
+    pii_stats = pii_masker.stats
+    print(f"    PII operations: {pii_stats['total_operations']} ({pii_stats['unique_tokens']} unique tokens)")
+    health = event_queue.health
+    print(f"    Queue: {health.total_enqueued} enqueued, {health.total_processed} processed")
+    all_p = latency_tracker.all_percentiles()
+    for comp, p in list(all_p.items())[:5]:
+        print(f"    Latency [{comp}]: P50={p['p50']:.1f}ms P95={p['p95']:.1f}ms P99={p['p99']:.1f}ms ({p['count']} samples)")
+    print()
 
 
 if __name__ == "__main__":

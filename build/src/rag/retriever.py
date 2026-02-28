@@ -19,7 +19,7 @@ import time
 from dataclasses import dataclass, field
 from typing import Any
 
-from src.rag.knowledge_base import FINTRAC_DOCUMENTS
+from src.rag.knowledge_base import FINTRAC_DOCUMENTS, FINANCIAL_GUIDANCE_DOCUMENTS
 
 
 @dataclass
@@ -82,7 +82,7 @@ class RegulatoryKnowledgeRAG:
     """
 
     def __init__(self) -> None:
-        self._documents = FINTRAC_DOCUMENTS
+        self._documents = FINTRAC_DOCUMENTS + FINANCIAL_GUIDANCE_DOCUMENTS
         self._chroma_collection = None
         self._tfidf_matrix = None
         self._tfidf_vectorizer = None

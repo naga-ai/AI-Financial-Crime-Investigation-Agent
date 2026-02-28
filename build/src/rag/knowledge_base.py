@@ -339,3 +339,229 @@ explanation when asked.
 """,
     },
 ]
+
+# ---------------------------------------------------------------------------
+# Financial guidance documents for WS Pulse
+# ---------------------------------------------------------------------------
+
+FINANCIAL_GUIDANCE_DOCUMENTS = [
+    {
+        "id": "cra-tfsa-rules-2026",
+        "title": "CRA TFSA Contribution Rules (2026)",
+        "category": "tax_guidance",
+        "typology": "tfsa",
+        "content": """Tax-Free Savings Account (TFSA) -- CRA Rules 2026
+
+The annual TFSA contribution limit for 2026 is $7,000 CAD.
+Cumulative lifetime limit (from age 18, starting 2009): up to $102,000 for
+someone who has been eligible since 2009.
+
+Key rules:
+- Contributions are NOT tax-deductible (unlike RRSP)
+- All investment income earned inside a TFSA is tax-free (capital gains, dividends, interest)
+- Withdrawals are tax-free and re-contribution room is restored the following January
+- Over-contributions are penalized at 1% per month on the excess amount
+- Cannot contribute to a TFSA if non-resident of Canada
+
+Optimal use: For investors in lower tax brackets, TFSA is often preferred over
+RRSP because the tax-free growth is more valuable than the RRSP deduction.
+For higher brackets (>40%), RRSP may be prioritized for the immediate tax refund,
+with TFSA used after maximizing RRSP employer match.""",
+    },
+    {
+        "id": "cra-rrsp-rules-2026",
+        "title": "CRA RRSP Contribution & Deduction Rules (2026)",
+        "category": "tax_guidance",
+        "typology": "rrsp",
+        "content": """Registered Retirement Savings Plan (RRSP) -- CRA Rules 2026
+
+RRSP contribution limit for 2026: 18% of previous year's earned income,
+up to a maximum of $32,490. Unused room carries forward indefinitely.
+
+Key rules:
+- Contributions are tax-deductible, reducing taxable income in the year of contribution
+- Investment growth is tax-deferred (tax paid on withdrawal)
+- Withdrawals are added to taxable income and taxed at marginal rate
+- Must convert to RRIF by December 31 of the year you turn 71
+- Spousal RRSP allows income splitting in retirement
+- Home Buyers' Plan (HBP): withdraw up to $60,000 tax-free for first home
+
+Employer match strategy: If your employer matches RRSP contributions (e.g., 4%),
+ALWAYS contribute at least enough to capture the full match -- this is an
+immediate 100% return on investment. Prioritize this over all other savings.""",
+    },
+    {
+        "id": "cra-fhsa-rules",
+        "title": "First Home Savings Account (FHSA) Rules",
+        "category": "tax_guidance",
+        "typology": "fhsa",
+        "content": """First Home Savings Account (FHSA) -- CRA Rules
+
+The FHSA combines RRSP and TFSA benefits for first-time home buyers.
+Annual contribution limit: $8,000. Lifetime maximum: $40,000.
+
+Key rules:
+- Contributions are tax-deductible (like RRSP)
+- Withdrawals for qualifying home purchase are tax-free (like TFSA)
+- Can carry forward up to $8,000 of unused room to the following year
+- Must be used within 15 years of opening or by Dec 31 of the year you turn 71
+- Can be combined with HBP for up to $100,000 tax-advantaged for first home
+- If not used for home purchase, can transfer to RRSP without affecting RRSP room
+
+Ideal for: Canadians aged 18+ who have never owned a home and are saving
+for a down payment. The double tax benefit (deduction + tax-free withdrawal)
+makes this the most efficient savings vehicle for first-time buyers.""",
+    },
+    {
+        "id": "dividend-tax-credit",
+        "title": "Canadian Dividend Tax Credit Explained",
+        "category": "tax_guidance",
+        "typology": "dividends",
+        "content": """Canadian Eligible Dividend Tax Credit
+
+Eligible dividends from Canadian public corporations receive preferential
+tax treatment through the dividend tax credit (DTC).
+
+Mechanism:
+1. Gross-up: Eligible dividends are grossed up by 38% for inclusion in income
+2. Federal DTC: 15.02% credit on the grossed-up amount
+3. Provincial DTC varies by province (Ontario: 10%, BC: 12%, Alberta: 10%)
+
+Effective tax rates on eligible dividends (approximate):
+- Under $55K income: ~0% effective rate (negative in some provinces)
+- $55K-$100K income: ~15-20% effective rate
+- $100K-$220K income: ~25-30% effective rate
+- Over $220K income: ~35-39% effective rate
+
+For non-registered accounts, Canadian eligible dividends are the most
+tax-efficient form of investment income, significantly better than
+interest income (fully taxable) or US dividends (no DTC, plus 15% withholding).
+
+Strategy: Hold Canadian dividend stocks in non-registered accounts.
+Hold US dividend stocks and bonds in RRSP (exempt from US withholding tax).
+Hold growth stocks in TFSA (maximize tax-free capital gains).""",
+    },
+    {
+        "id": "tax-loss-harvesting",
+        "title": "Tax-Loss Harvesting Strategy for Canadian Investors",
+        "category": "investment_strategy",
+        "typology": "tax_optimization",
+        "content": """Tax-Loss Harvesting (TLH) -- Canadian Rules
+
+Tax-loss harvesting involves selling investments at a loss to offset capital
+gains, reducing your tax liability.
+
+Key rules:
+- Capital losses can offset capital gains in the current year
+- Unused losses can be carried back 3 years or forward indefinitely
+- Superficial loss rule: Cannot repurchase the same security (or identical)
+  within 30 calendar days before or after the sale, or in a registered account
+- 50% inclusion rate: Only 50% of capital gains are taxable in Canada (as of 2026)
+
+Strategy:
+1. Identify holdings with unrealized losses in non-registered accounts
+2. Sell to realize the loss
+3. Wait 31+ days before repurchasing, OR immediately buy a similar (not identical)
+   ETF (e.g., sell XIC.TO, buy VCN.TO)
+4. Apply losses against gains to reduce tax
+
+Value calculation: At 53.5% marginal rate (Ontario top bracket),
+a $10,000 realized loss saves $10,000 x 50% x 53.5% = $2,675 in taxes.
+
+Warning: Does NOT apply to registered accounts (TFSA, RRSP, FHSA).
+Losses in registered accounts cannot be claimed.""",
+    },
+    {
+        "id": "emergency-fund-guidelines",
+        "title": "Emergency Fund Best Practices",
+        "category": "financial_planning",
+        "typology": "emergency_fund",
+        "content": """Emergency Fund Guidelines
+
+An emergency fund is the foundation of financial security. It should cover
+3-6 months of essential expenses and be held in liquid, low-risk instruments.
+
+Sizing guidelines:
+- Single income, stable employment: 3 months expenses
+- Dual income, stable employment: 3 months expenses
+- Single income, variable/contract: 6 months expenses
+- Self-employed or freelance: 6-9 months expenses
+- Pre-retirement (within 5 years): 12 months expenses
+
+Where to hold:
+- High-interest savings account (HISA): Currently 4.0-4.5% at online banks
+- Wealthsimple Cash account: Earns interest, CDIC insured up to $100K
+- Money market fund: Slightly higher yield, still very liquid
+- NOT in stocks, bonds, or crypto (too volatile for emergency purposes)
+
+Funding priority:
+1. Build minimum 1 month emergency fund
+2. Capture employer RRSP match (free money)
+3. Build to 3 months emergency fund
+4. Max TFSA/RRSP contributions
+5. Build to 6 months if variable income
+
+Replenishment: After using emergency funds, replenish before resuming
+investment contributions.""",
+    },
+    {
+        "id": "rebalancing-strategy",
+        "title": "Portfolio Rebalancing Strategy",
+        "category": "investment_strategy",
+        "typology": "rebalancing",
+        "content": """Portfolio Rebalancing Best Practices
+
+Rebalancing restores your portfolio to its target asset allocation by selling
+over-weighted assets and buying under-weighted ones.
+
+When to rebalance:
+- Calendar-based: Quarterly or semi-annually (simple, disciplined)
+- Threshold-based: When any asset class drifts >5% from target (more responsive)
+- Combination: Check quarterly, rebalance only if >5% drift
+
+Rebalancing methods:
+1. Sell high/buy low: Sell overweight, buy underweight (triggers tax in non-reg)
+2. Cash flow rebalancing: Direct new contributions to underweight assets (tax-free)
+3. Dividend rebalancing: Reinvest dividends into underweight assets
+
+Tax-efficient rebalancing order:
+1. First rebalance within registered accounts (TFSA, RRSP) -- no tax
+2. Use new contributions to registered accounts to correct drift
+3. Only sell in non-registered as last resort (consider tax-loss harvesting)
+
+Concentration risk: No single stock should exceed 10-15% of total portfolio.
+No single sector should exceed 25-30%. Over-concentration in employer stock
+is a common and dangerous risk.""",
+    },
+    {
+        "id": "market-volatility-guide",
+        "title": "Navigating Market Volatility",
+        "category": "investment_strategy",
+        "typology": "market_volatility",
+        "content": """Navigating Market Volatility -- Investor Guide
+
+Market declines are normal and expected. Historical context:
+- 5% declines: ~3 times per year (average)
+- 10% corrections: ~once per year
+- 20%+ bear markets: ~every 3-5 years
+- Average recovery from 10% correction: 4 months
+- Average recovery from 20% bear market: 14 months
+
+Decision framework during market drops:
+1. Check your time horizon. If >10 years to retirement, stay invested
+2. Review your risk profile. If losing sleep, you may be over-allocated to equities
+3. Check emergency fund. Only invest what you won't need for 5+ years
+4. Consider buying. Historically, investing during declines produces above-average returns
+5. Tax-loss harvest in non-registered accounts if applicable
+
+Common mistakes to avoid:
+- Panic selling at the bottom
+- Trying to time the market (time IN market > timing the market)
+- Checking portfolio too frequently during volatile periods
+- Making emotional decisions based on headlines
+- Abandoning your investment plan
+
+Dollar-cost averaging: If sitting on cash during volatility, deploy over
+4-8 weeks rather than all at once to reduce timing risk.""",
+    },
+]
