@@ -1,9 +1,10 @@
 """
-Wealthsimple AML Investigation Command Center
-===============================================
+WS Intelligence Platform Dashboard
+====================================
 
-Production-grade dashboard for AI-assisted financial crime investigation.
-Designed for compliance officers, team leads, and senior management.
+Unified dashboard for WS Sentinel (compliance AI) and WS Pulse
+(client financial intelligence). Includes story-driven demos,
+production metrics, and shared infrastructure monitoring.
 """
 
 import json
@@ -1572,137 +1573,69 @@ Built for the Wealthsimple AI Builders Program
 
     st.divider()
 
-    col1, col2 = st.columns(2)
-    with col1:
-        st.markdown("""
-#### WS Sentinel — Compliance Intelligence
-*AI that investigates so your analysts can decide*
+    # ── Two-Product Launcher Cards ──
+    col1, col2 = st.columns(2, gap="large")
 
-Multi-agent AML investigation pipeline that processes alerts from
-detection to FINTRAC-ready STR report in **< 20ms**, auto-closing
-80% of false positives while maintaining full regulatory compliance.
-""")
-        st.metric("Cost Reduction", "$1.65M / year")
-        st.metric("Investigation Time", "45 min → 17ms")
+    with col1:
+        st.markdown(f"""
+<div style='border: 2px solid {WS_GREEN}; border-radius: 12px; padding: 24px; background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);'>
+<h2 style='color: {WS_GREEN}; margin-top:0;'>WS Sentinel</h2>
+<p style='color: {WS_GRAY}; font-style: italic; margin-bottom: 16px;'>Compliance Intelligence</p>
+<p style='color: #c9d1d9; font-size: 1.05rem;'>
+AI that investigates so your analysts can decide.
+</p>
+<p style='color: #c9d1d9; font-size: 0.9rem;'>
+Multi-agent AML investigation pipeline: alert triage, LangGraph investigation,
+FINTRAC-ready STR reports, and pattern discovery. Processes alerts in &lt; 20ms,
+auto-closing 80% of false positives.
+</p>
+</div>
+""", unsafe_allow_html=True)
+        c1, c2, c3 = st.columns(3)
+        c1.metric("Annual Savings", "$1.65M")
+        c2.metric("Investigation", "17ms")
+        c3.metric("FP Auto-Close", "80%")
+        if st.button("Launch Sentinel Demo", type="primary", use_container_width=True):
+            st.session_state.nav_target = "Sentinel Demo"
+            st.rerun()
 
     with col2:
-        st.markdown("""
-#### WS Pulse — Client Financial Intelligence
-*AI that turns every financial moment into the right action*
+        st.markdown(f"""
+<div style='border: 2px solid {WS_BLUE}; border-radius: 12px; padding: 24px; background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);'>
+<h2 style='color: {WS_BLUE}; margin-top:0;'>WS Pulse</h2>
+<p style='color: {WS_GRAY}; font-style: italic; margin-bottom: 16px;'>Client Financial Intelligence</p>
+<p style='color: #c9d1d9; font-size: 1.05rem;'>
+AI that turns every financial moment into the right action.
+</p>
+<p style='color: #c9d1d9; font-size: 0.9rem;'>
+Event-driven pipeline: detects paychecks, earnings, market moves, then generates
+personalized, tax-aware recommendations for each user's unique portfolio.
+Same event, different advice for every user.
+</p>
+</div>
+""", unsafe_allow_html=True)
+        c1, c2, c3 = st.columns(3)
+        c1.metric("Per-Event Cost", "$0.002")
+        c2.metric("Users Served", "3M+")
+        c3.metric("Response", "< 1 sec")
+        if st.button("Launch Pulse Demo", type="primary", use_container_width=True):
+            st.session_state.nav_target = "Pulse Walkthrough"
+            st.rerun()
 
-Event-driven pipeline that detects financial moments (paychecks, earnings,
-market moves), analyzes portfolio impact, and generates personalized
-recommendations for **3M+ users** in real-time.
-""")
-        st.metric("Insight Cost", "$300/hr advisor → $0.002/event")
-        st.metric("Support Reduction", "30% fewer tickets")
-
+    # ── Shared Infrastructure Callout ──
     st.divider()
+    st.markdown("#### Shared Production Infrastructure")
+    st.markdown("Both systems run on the same platform layer -- built once, used everywhere.")
+    ic1, ic2, ic3, ic4, ic5, ic6 = st.columns(6)
+    ic1.markdown(f"**PII Masking**\n\n<span style='color:{WS_GREEN}'>Field-level tokenization</span>", unsafe_allow_html=True)
+    ic2.markdown(f"**Event Queue**\n\n<span style='color:{WS_GREEN}'>Redis Streams + DLQ</span>", unsafe_allow_html=True)
+    ic3.markdown(f"**Latency**\n\n<span style='color:{WS_GREEN}'>P50/P90/P95/P99</span>", unsafe_allow_html=True)
+    ic4.markdown(f"**RAG**\n\n<span style='color:{WS_GREEN}'>20 docs, ChromaDB</span>", unsafe_allow_html=True)
+    ic5.markdown(f"**Scorecards**\n\n<span style='color:{WS_GREEN}'>OSFI E-23 aligned</span>", unsafe_allow_html=True)
+    ic6.markdown(f"**Cache**\n\n<span style='color:{WS_GREEN}'>Redis + fallback</span>", unsafe_allow_html=True)
 
-    st.markdown("### The Problem")
-    col1, col2 = st.columns([3, 2])
-    with col1:
-        st.markdown("""
-**Back Office:** Wealthsimple's compliance team manually reviews hundreds of AML alerts weekly.
-~80% are false positives. An analyst spends 45 minutes on each, costing thousands of hours/year.
-
-**Client Facing:** 3M+ users receive the same generic notifications. Portfolio insights
-require expensive advisor consultations ($300/hr). Financial events (paychecks, earnings,
-market moves) pass without personalized guidance.
-
-**Both problems share the same root cause:** workflows designed before modern AI existed.
-They wouldn't be built this way today.
-""")
-    with col2:
-        st.markdown("#### Cost of the Status Quo")
-        st.metric("AML analyst hours/week", "~190h")
-        st.metric("Annual compliance cost (20 FTE)", "$2M")
-        st.metric("Per-user insight cost", "$300/hr")
-        st.metric("Missed financial moments", "Millions/year")
-
+    # ── Cost Analysis ──
     st.divider()
-
-    # ── The Solution ──
-    st.markdown("### What I Built")
-    st.markdown("""
-A unified AI platform with **two production systems** sharing common infrastructure.
-Both demonstrate AI-native thinking: not bolting AI onto existing workflows, but
-reimagining the process from scratch.
-""")
-
-    st.markdown("#### WS Sentinel — Compliance Agents")
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        st.markdown("""
-**Triage Agent**
-XGBoost classifier
-- 24 engineered features
-- Sub-2ms inference
-- Auto-closes 80% FP
-""")
-    with col2:
-        st.markdown("""
-**Investigation Agent**
-LangGraph state machine
-- 9 analytical tools
-- Conditional routing
-- Entity network mapping
-""")
-    with col3:
-        st.markdown("""
-**Report Agent**
-Template + GPT-4o-mini
-- FINTRAC-compliant STR
-- RAG-grounded narrative
-- Filing recommendation
-""")
-    with col4:
-        st.markdown("""
-**Pattern Agent**
-K-Means / DBSCAN
-- 16 clustering features
-- Emerging typologies
-- Bias detection
-""")
-
-    st.markdown("#### WS Pulse — Client Intelligence Agents")
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        st.markdown("""
-**Event Detector**
-Rule + ML classifier
-- 6 event types
-- Priority assignment
-- User relevance scoring
-""")
-    with col2:
-        st.markdown("""
-**Portfolio Analyzer**
-Per-user impact analysis
-- Concentration risk
-- Tax implications
-- Goal alignment
-""")
-    with col3:
-        st.markdown("""
-**Recommender**
-Personalized actions
-- Tax-aware allocation
-- RAG financial guidance
-- Plain-language narrative
-""")
-    with col4:
-        st.markdown("""
-**Shared Infra**
-Production-grade
-- PII masking
-- Redis Streams queue
-- P50-P99 latency
-- Model scorecards
-""")
-
-    st.divider()
-
     st.markdown("### Impact & Cost Analysis")
 
     col1, col2, col3 = st.columns(3)
@@ -1711,7 +1644,8 @@ Production-grade
         fig = go.Figure()
         fig.add_trace(go.Bar(name="Manual (20 FTE)", x=["Annual Cost"], y=[2_000_000], marker_color=WS_RED))
         fig.add_trace(go.Bar(name="AI + 4 FTE", x=["Annual Cost"], y=[350_000], marker_color=WS_GREEN))
-        fig.update_layout(height=250, margin=dict(t=10, b=10), barmode="group")
+        fig.update_layout(height=250, margin=dict(t=10, b=10), barmode="group",
+                         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
         st.plotly_chart(fig, use_container_width=True)
         st.markdown("**$1.65M/year saved.** 80% of false positives auto-closed. Analysts focus on high-risk cases.")
 
@@ -1720,7 +1654,8 @@ Production-grade
         fig = go.Figure()
         fig.add_trace(go.Bar(name="Advisor ($300/hr)", x=["Per-User Cost"], y=[300], marker_color=WS_RED))
         fig.add_trace(go.Bar(name="AI ($0.002/event)", x=["Per-User Cost"], y=[0.002], marker_color=WS_GREEN))
-        fig.update_layout(height=250, margin=dict(t=10, b=10), barmode="group")
+        fig.update_layout(height=250, margin=dict(t=10, b=10), barmode="group",
+                         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
         st.plotly_chart(fig, use_container_width=True)
         st.markdown("**Democratized** to 3M users. Premium upsell driver. 30% support ticket reduction (~$500K/yr).")
 
@@ -2097,95 +2032,213 @@ Top-K results (filtered by relevance threshold)
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# PULSE PAGE 1: Event Feed
+# PULSE PAGE 1: Story-Driven Walkthrough (Demo Hero Page)
 # ═══════════════════════════════════════════════════════════════════════════
 
-def page_pulse_events():
-    st.markdown("## Pulse: Event Feed")
-    st.caption("Real-time financial events processed through the AI pipeline")
+def page_pulse_walkthrough():
+    st.markdown(f"## <span style='color:{WS_BLUE}'>WS Pulse</span> — Demo Walkthrough", unsafe_allow_html=True)
+    st.caption("Same event, completely different AI reasoning for every user. That's the point.")
 
     pulse = get_pulse()
+    portfolios = pulse.portfolios
+    portfolio_map = {p.user_id: p for p in portfolios}
 
-    if not st.session_state.pulse_processed:
-        st.info("Run the Pulse pipeline to process financial events.")
-        col1, col2 = st.columns([3, 1])
-        with col1:
-            max_events = st.slider("Events to process", 5, len(pulse.events), min(20, len(pulse.events)), step=5)
-        with col2:
-            if st.button("Run Pulse Pipeline", type="primary"):
-                with st.spinner("Processing financial events..."):
-                    results = pulse.process_all_events(max_events=max_events)
-                    st.session_state.pulse_results = results
-                    st.session_state.pulse_processed = True
-                    st.rerun()
-        st.divider()
-        st.markdown("#### Pending Events")
-        for evt in pulse.events[:10]:
-            priority_color = {"high": WS_RED, "medium": WS_GOLD, "low": WS_GREEN}.get(evt.priority.value, WS_GRAY)
-            st.markdown(
-                f"<span style='color:{priority_color};font-weight:bold;'>[{evt.priority.value.upper()}]</span> "
-                f"**{evt.title}** — {evt.event_type.value} | {len(evt.affected_users)} users",
-                unsafe_allow_html=True,
-            )
+    from src.pulse.agents.graph import run_pulse_pipeline
+
+    # ── STEP 1: Meet the Users ──
+    st.markdown("### Step 1: Meet the Users")
+    st.markdown("These are real Wealthsimple personas -- different ages, goals, risk profiles, and portfolios.")
+
+    showcase_ids = ["USR-001", "USR-002", "USR-005", "USR-007"]
+    showcase = [p for p in portfolios if p.user_id in showcase_ids]
+
+    cols = st.columns(len(showcase))
+    for i, p in enumerate(showcase):
+        with cols[i]:
+            risk_color = {"conservative": WS_BLUE, "moderate": WS_GREEN, "growth": WS_GOLD, "aggressive": WS_RED}.get(
+                p.goals.risk_profile.value, WS_GRAY)
+            st.markdown(f"""
+<div style='border: 1px solid #30363d; border-radius: 10px; padding: 16px; background: #0d1117; min-height: 280px;'>
+<h4 style='margin-top:0; color: #e6edf3;'>{p.display_name}</h4>
+<p style='color: {WS_GRAY}; margin: 4px 0;'>{p.age}yo, {p.province} — {p.occupation}</p>
+<hr style='border-color: #21262d; margin: 8px 0;'>
+<p style='color: #e6edf3; font-size: 1.3rem; font-weight: bold;'>${p.total_value:,.0f}</p>
+<p style='color: {WS_GRAY}; font-size: 0.85rem;'>{len(p.accounts)} accounts, {len(p.all_holdings)} holdings</p>
+<p style='color: {risk_color}; font-weight: bold; font-size: 0.9rem;'>{p.goals.risk_profile.value.upper()} risk</p>
+<p style='color: {WS_GRAY}; font-size: 0.85rem;'>Premium: {'Yes' if p.goals.has_premium else 'No'}</p>
+</div>
+""", unsafe_allow_html=True)
+
+    # ── STEP 2: Choose an Event ──
+    st.divider()
+    st.markdown("### Step 2: A Financial Event Happens")
+    st.markdown("Pick an event -- or use the default. Watch how the AI responds differently for each user.")
+
+    interesting_events = [
+        e for e in pulse.events
+        if e.event_type.value in ("earnings_report", "market_drop", "boc_rate_decision", "paycheck")
+        and len(e.affected_users) >= 2
+    ]
+    if not interesting_events:
+        interesting_events = pulse.events[:5]
+
+    event_labels = {
+        f"{e.title} ({e.event_type.value})": e
+        for e in interesting_events
+    }
+    default_idx = 0
+    for i, e in enumerate(interesting_events):
+        if "NVDA" in e.title or "NVIDIA" in e.title:
+            default_idx = i
+            break
+        if e.event_type.value == "market_drop":
+            default_idx = i
+
+    selected_label = st.selectbox("Select event", list(event_labels.keys()), index=default_idx)
+    event = event_labels[selected_label]
+
+    priority_color = {"high": WS_RED, "medium": WS_GOLD, "low": WS_GREEN}.get(event.priority.value, WS_GRAY)
+    st.markdown(f"""
+<div style='border-left: 4px solid {priority_color}; padding: 16px; background: #161b22; border-radius: 0 8px 8px 0; margin: 8px 0;'>
+<h4 style='margin-top: 0; color: #e6edf3;'>{event.title}</h4>
+<p style='color: #c9d1d9;'>{event.description}</p>
+<p style='color: {WS_GRAY}; font-size: 0.85rem;'>
+Type: <strong>{event.event_type.value}</strong> |
+Priority: <span style='color: {priority_color};'>{event.priority.value.upper()}</span> |
+Affected tickers: {', '.join(event.affected_tickers) if event.affected_tickers else 'N/A'} |
+Users impacted: {len(event.affected_users)}
+</p>
+</div>
+""", unsafe_allow_html=True)
+
+    # ── STEP 3: AI Processes -- Side-by-Side Comparison ──
+    st.divider()
+    st.markdown("### Step 3: The AI Thinks Differently for Each User")
+
+    demo_key = f"pulse_demo_{event.event_id}"
+    if demo_key not in st.session_state:
+        st.session_state[demo_key] = None
+
+    if st.button("Process This Event", type="primary", use_container_width=True):
+        with st.spinner("Running Pulse pipeline for each user..."):
+            demo_results = {}
+            for uid in showcase_ids:
+                p = portfolio_map.get(uid)
+                if p:
+                    result = run_pulse_pipeline(
+                        event=event,
+                        portfolio=p,
+                        all_portfolios=portfolio_map,
+                        rag_engine=pulse._get_rag_engine(),
+                    )
+                    demo_results[uid] = result
+            st.session_state[demo_key] = demo_results
+            if not st.session_state.pulse_processed:
+                st.session_state.pulse_processed = True
+                st.session_state.pulse_results = list(demo_results.values())
+            else:
+                st.session_state.pulse_results.extend(demo_results.values())
+            st.rerun()
+
+    demo_results = st.session_state.get(demo_key)
+    if not demo_results:
+        st.info("Click **Process This Event** above to see the AI generate personalized recommendations for each user.")
         return
 
-    results = st.session_state.pulse_results
-    stats = pulse.stats
+    cols = st.columns(len(showcase_ids))
+    for i, uid in enumerate(showcase_ids):
+        result = demo_results.get(uid)
+        p = portfolio_map.get(uid)
+        if not result or not p:
+            continue
 
-    c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Events Processed", f"{stats['total_processed']:,}")
-    c2.metric("Unique Users", stats.get("unique_users", 0))
-    c3.metric("Avg Processing Time", f"{stats.get('avg_processing_time_ms', 0):.1f}ms")
-    c4.metric("Est. Value Generated", f"${stats.get('total_estimated_value_cad', 0):,.0f}")
+        rec = result.recommendation
+        with cols[i]:
+            if rec is None:
+                st.markdown(f"""
+<div style='border: 1px solid #30363d; border-radius: 10px; padding: 16px; background: #0d1117;'>
+<h5 style='margin-top:0; color: #e6edf3;'>{p.display_name}</h5>
+<p style='color: {WS_GRAY};'>Not relevant to this user's portfolio.</p>
+<p style='color: {WS_GRAY}; font-size: 0.8rem;'>Processed in {result.processing_time_ms:.1f}ms</p>
+</div>
+""", unsafe_allow_html=True)
+                continue
 
+            action_color = WS_GREEN if rec.action.value in ("hold", "allocate_tfsa", "allocate_rrsp", "build_emergency_fund", "increase_contribution") else WS_GOLD if rec.action.value in ("rebalance", "review_concentration") else WS_RED
+            st.markdown(f"""
+<div style='border: 1px solid #30363d; border-radius: 10px; padding: 16px; background: #0d1117;'>
+<h5 style='margin-top:0; color: #e6edf3;'>{p.display_name}</h5>
+<p style='color: {action_color}; font-weight: bold; font-size: 1.1rem;'>{rec.action_label}</p>
+<p style='color: #c9d1d9; font-size: 0.9rem;'>{rec.impact_summary}</p>
+<p style='color: {WS_GRAY}; font-size: 0.85rem;'>Confidence: {rec.confidence:.0%} | Value: ${rec.estimated_value_cad:,.2f}</p>
+<p style='color: {WS_GRAY}; font-size: 0.8rem;'>Processed in {result.processing_time_ms:.1f}ms</p>
+</div>
+""", unsafe_allow_html=True)
+
+    # ── STEP 4: Deep Dive ──
     st.divider()
+    st.markdown("### Step 4: Deep Dive into AI Reasoning")
 
-    tab1, tab2 = st.tabs(["Event Stream", "Analytics"])
+    for uid in showcase_ids:
+        result = demo_results.get(uid)
+        p = portfolio_map.get(uid)
+        if not result or not result.recommendation or not p:
+            continue
+        rec = result.recommendation
 
-    with tab1:
-        feed = pulse.get_event_feed(limit=50)
-        for entry in feed:
-            priority_color = {"high": WS_RED, "medium": WS_GOLD, "low": WS_GREEN}.get(entry.get("priority", ""), WS_GRAY)
-            rec = entry.get("recommendation", {})
-            with st.expander(
-                f"{'🔴' if entry['priority'] == 'high' else '🟡' if entry['priority'] == 'medium' else '🟢'} "
-                f"**{entry.get('title', '')}** — {entry.get('user_id', '')} | {entry.get('processing_time_ms', 0):.1f}ms"
-            ):
-                col1, col2 = st.columns([2, 1])
-                with col1:
-                    st.markdown(f"**Event Type:** {entry.get('event_type', '')}")
-                    st.markdown(f"**Timestamp:** {entry.get('timestamp', '')[:16]}")
-                    if rec:
-                        st.markdown(f"**Recommendation:** {rec.get('title', '')}")
-                        st.markdown(f"**Action:** `{rec.get('action', '')}`")
-                        st.markdown(f"**Confidence:** {rec.get('confidence', 0):.0%}")
-                with col2:
-                    if rec:
-                        st.metric("Est. Value", f"${rec.get('estimated_value', 0):,.2f}")
-                    st.markdown(f"**Cache Hit:** {'Yes' if entry.get('cache_hit') else 'No'}")
+        with st.expander(f"**{p.display_name}** — {rec.title}"):
+            col1, col2 = st.columns([3, 1])
+            with col1:
+                st.markdown(rec.narrative)
+                if rec.reasoning:
+                    st.markdown("**AI Reasoning Chain:**")
+                    for r_item in rec.reasoning:
+                        st.markdown(f"- {r_item}")
+            with col2:
+                st.metric("Action", rec.action_label)
+                st.metric("Confidence", f"{rec.confidence:.0%}")
+                st.metric("Est. Value", f"${rec.estimated_value_cad:,.2f}")
 
-    with tab2:
-        by_type = stats.get("by_event_type", {})
-        if by_type:
-            fig = px.pie(
-                values=list(by_type.values()),
-                names=list(by_type.keys()),
-                title="Events by Type",
-                color_discrete_sequence=COLORS,
-            )
-            fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
-            st.plotly_chart(fig, use_container_width=True)
+                decision = st.session_state.rec_decisions.get(rec.recommendation_id, "pending")
+                if decision == "pending":
+                    bc1, bc2 = st.columns(2)
+                    if bc1.button("Approve", key=f"wt_app_{uid}_{event.event_id}"):
+                        st.session_state.rec_decisions[rec.recommendation_id] = "approved"
+                        st.rerun()
+                    if bc2.button("Dismiss", key=f"wt_dis_{uid}_{event.event_id}"):
+                        st.session_state.rec_decisions[rec.recommendation_id] = "dismissed"
+                        st.rerun()
+                else:
+                    status_color = {
+                        "approved": WS_GREEN, "dismissed": WS_RED, "adjusted": WS_GOLD,
+                    }.get(decision, WS_GRAY)
+                    st.markdown(f"**Decision:** <span style='color:{status_color}'>{decision.upper()}</span>", unsafe_allow_html=True)
 
-        by_action = stats.get("by_recommendation_action", {})
-        if by_action:
-            fig = px.bar(
-                x=list(by_action.keys()),
-                y=list(by_action.values()),
-                title="Recommendations by Action",
-                color_discrete_sequence=[WS_GREEN],
-            )
-            fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
-            st.plotly_chart(fig, use_container_width=True)
+            if result.rag_context and result.rag_context.get("results"):
+                st.markdown("**RAG-Retrieved Financial Guidance:**")
+                for doc in result.rag_context["results"][:3]:
+                    st.caption(f"_{doc.get('title', '')}_ (relevance: {doc.get('score', 0):.2f})")
+
+    # ── STEP 5: Infrastructure Callout ──
+    st.divider()
+    st.markdown("### Under the Hood")
+    total_time = sum(r.processing_time_ms for r in demo_results.values())
+    total_users = len(demo_results)
+    pii_ops = pii_masker.stats["total_operations"]
+    queue_enqueued = event_queue.health.total_enqueued
+
+    ic1, ic2, ic3, ic4, ic5 = st.columns(5)
+    ic1.metric("Total Processing", f"{total_time:.1f}ms")
+    ic2.metric("Users Analyzed", total_users)
+    ic3.metric("PII Operations", pii_ops)
+    ic4.metric("Events Queued", queue_enqueued)
+    rag_docs = sum(len(r.rag_context.get("results", [])) for r in demo_results.values())
+    ic5.metric("RAG Docs Retrieved", rag_docs)
+
+    st.caption(
+        "Every step: PII-masked inputs, latency tracked (P50-P99), "
+        "traced in Langfuse, queued via Redis Streams, cached in Redis."
+    )
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -2559,27 +2612,14 @@ def main():
 
     st.sidebar.divider()
 
-    st.sidebar.markdown("##### PLATFORM")
-    platform_pages = {
-        "About This Project": page_submission,
-    }
-
-    st.sidebar.markdown("##### SENTINEL — Compliance")
-    sentinel_pages = {
-        "Executive Summary": page_executive,
+    all_pages = {
+        "Launch Demos": page_submission,
+        "Sentinel Demo": page_executive,
         "Investigation Queue": page_alert_queue,
         "STR Report Review": page_report_review,
-    }
-
-    st.sidebar.markdown("##### PULSE — Client Intelligence")
-    pulse_pages = {
-        "Event Feed": page_pulse_events,
-        "Portfolio Intelligence": page_pulse_portfolios,
+        "Pulse Walkthrough": page_pulse_walkthrough,
+        "Portfolio Explorer": page_pulse_portfolios,
         "Recommendations": page_pulse_recommendations,
-    }
-
-    st.sidebar.markdown("##### SHARED INFRASTRUCTURE")
-    infra_pages = {
         "Production Metrics": page_production_metrics,
         "Model Intelligence": page_model_intelligence,
         "Knowledge Base (RAG)": page_knowledge_base,
@@ -2590,13 +2630,46 @@ def main():
         "AI Governance": page_governance,
     }
 
-    all_pages = {}
-    all_pages.update(platform_pages)
-    all_pages.update(sentinel_pages)
-    all_pages.update(pulse_pages)
-    all_pages.update(infra_pages)
+    nav_target = st.session_state.pop("nav_target", None)
+    if nav_target and nav_target in all_pages:
+        default_idx = list(all_pages.keys()).index(nav_target)
+    else:
+        default_idx = 0
 
-    page = st.sidebar.radio("Navigate", list(all_pages.keys()), index=0, label_visibility="collapsed")
+    st.sidebar.markdown(f"<p style='color:{WS_GRAY}; font-size:0.75rem; letter-spacing:1px; margin-bottom:2px;'>PLATFORM</p>", unsafe_allow_html=True)
+    st.sidebar.markdown("")
+
+    st.sidebar.markdown(f"<p style='color:{WS_GREEN}; font-size:0.75rem; letter-spacing:1px; margin-bottom:2px; margin-top:8px;'>SENTINEL — Compliance</p>", unsafe_allow_html=True)
+    st.sidebar.markdown("")
+
+    st.sidebar.markdown(f"<p style='color:{WS_BLUE}; font-size:0.75rem; letter-spacing:1px; margin-bottom:2px; margin-top:8px;'>PULSE — Client Intelligence</p>", unsafe_allow_html=True)
+    st.sidebar.markdown("")
+
+    st.sidebar.markdown(f"<p style='color:{WS_GRAY}; font-size:0.75rem; letter-spacing:1px; margin-bottom:2px; margin-top:8px;'>INFRASTRUCTURE</p>", unsafe_allow_html=True)
+
+    page = st.sidebar.radio(
+        "Navigate",
+        list(all_pages.keys()),
+        index=default_idx,
+        label_visibility="collapsed",
+        format_func=lambda x: {
+            "Launch Demos": "Launch Demos",
+            "Sentinel Demo": "  Demo & Results",
+            "Investigation Queue": "  Investigation Queue",
+            "STR Report Review": "  STR Report Review",
+            "Pulse Walkthrough": "  Demo & Walkthrough",
+            "Portfolio Explorer": "  Portfolio Explorer",
+            "Recommendations": "  Recommendations",
+            "Production Metrics": "  Production Metrics",
+            "Model Intelligence": "  Model Intelligence",
+            "Knowledge Base (RAG)": "  Knowledge Base (RAG)",
+            "Observability": "  Observability",
+            "Cache Performance": "  Cache Performance",
+            "Pattern Discovery": "  Pattern Discovery",
+            "Architecture": "  Architecture",
+            "AI Governance": "  AI Governance",
+        }.get(x, x),
+    )
 
     st.sidebar.divider()
     results = st.session_state.get("pipeline_results", [])
@@ -2607,18 +2680,16 @@ def main():
         if results:
             n = len(results)
             auto = sum(1 for r in results if r.status == "auto_closed")
-            st.sidebar.metric("Sentinel Processed", f"{n:,}")
-            st.sidebar.metric("Auto-Close Rate", f"{auto/max(n,1)*100:.0f}%")
+            st.sidebar.metric("Sentinel", f"{n:,} alerts ({auto/max(n,1)*100:.0f}% auto-closed)")
         if pulse_results:
-            st.sidebar.metric("Pulse Processed", f"{len(pulse_results):,}")
+            st.sidebar.metric("Pulse", f"{len(pulse_results):,} events processed")
 
         trace_stats = trace_store.get_stats()
         if trace_stats["total_traces"] > 0:
-            st.sidebar.metric("Total Traces", trace_stats["total_traces"])
+            st.sidebar.metric("Traces", trace_stats["total_traces"])
 
     st.sidebar.divider()
-    st.sidebar.markdown(f"**Cache:** {cache.backend_type.upper()}")
-    st.sidebar.markdown(f"**Queue:** {event_queue.backend_type.upper()}")
+    st.sidebar.markdown(f"**Cache:** {cache.backend_type.upper()} | **Queue:** {event_queue.backend_type.upper()}")
     if st.session_state.get("run_timestamp"):
         st.sidebar.caption(f"Last run: {st.session_state.run_timestamp[:19]}")
 
