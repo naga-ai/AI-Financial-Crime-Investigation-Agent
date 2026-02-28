@@ -11,6 +11,9 @@ dist/
 build/
 *.egg
 
+# Virtual environment
+.venv/
+
 # Large generated data (regenerated on deploy)
 src/data/sample/*.json
 
@@ -24,3 +27,5 @@ models/*.joblib
 # OS
 .DS_Store
 Thumbs.db
+
+app/.venv/

@@ -9,15 +9,17 @@ __pycache__/
 .ruff_cache/
 *.joblib
 dist/
-build/build/
-build/dist/
 *.egg
 
+# Virtual environment
+.venv/
+app/.venv/
+
 # Large generated data (regenerated on deploy)
-build/src/data/sample/*.json
+app/src/data/sample/*.json
 
 # Model artifacts (retrained on deploy)
-build/models/*.joblib
+app/models/*.joblib
 
 # IDE
 .vscode/
