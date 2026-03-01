@@ -385,7 +385,7 @@ def build_pulse_event_scorecard() -> ModelScorecard:
         training_date=datetime.utcnow().strftime("%Y-%m-%d"),
         intended_use=(
             "Classify financial events into types and priority levels for personalized "
-            "recommendation generation. Powers the WS Pulse event feed."
+            "recommendation generation. Powers the WS Pilot event feed."
         ),
         out_of_scope=(
             "Not intended for trading signals or investment advice. Recommendations "

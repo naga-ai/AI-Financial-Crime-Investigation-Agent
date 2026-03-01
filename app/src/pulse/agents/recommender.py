@@ -1,4 +1,4 @@
-"""Recommendation engine for WS Pulse.
+"""Recommendation engine for WS Pilot.
 
 Generates personalized, actionable recommendations based on event
 classification, portfolio impact analysis, and RAG-retrieved

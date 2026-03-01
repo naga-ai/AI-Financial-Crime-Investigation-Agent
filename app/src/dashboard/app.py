@@ -2,7 +2,7 @@
 WS Intelligence Platform Dashboard
 ====================================
 
-Unified dashboard for WS Sentinel (compliance AI) and WS Pulse
+Unified dashboard for WS Clarity (compliance AI) and WS Pilot
 (client financial intelligence). Includes story-driven demos,
 production metrics, and shared infrastructure monitoring.
 """
@@ -32,15 +32,16 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-WS_BLACK  = "#1A1A2E"
-WS_DARK   = "#16213E"
-WS_GREEN  = "#00C853"
-WS_GOLD   = "#FFD600"
-WS_RED    = "#FF1744"
-WS_BLUE   = "#2979FF"
-WS_GRAY   = "#90A4AE"
-WS_AMBER  = "#FF8F00"
-COLORS    = [WS_GREEN, WS_BLUE, WS_GOLD, WS_RED, "#AB47BC", "#26A69A"]
+WS_BLACK  = "#32302F"   # Wealthsimple Dune — primary dark bg
+WS_DARK   = "#3E3B39"   # Wealthsimple secondary dark surface
+WS_GREEN  = "#1DB954"   # Wealthsimple brand green
+WS_GOLD   = "#F6BA40"   # Wealthsimple golden yellow
+WS_RED    = "#ED603C"   # Wealthsimple warm coral
+WS_BLUE   = "#3E5B5E"   # Wealthsimple deep teal
+WS_GRAY   = "#A09C98"   # Wealthsimple muted text
+WS_AMBER  = "#ED603C"   # Wealthsimple coral (shared with RED for alerts)
+WS_TEAL   = "#83A6A8"   # Wealthsimple light teal — accent
+COLORS    = [WS_GREEN, WS_TEAL, WS_GOLD, WS_RED, "#3E5B5E", "#C8A97A"]
 
 # ---------------------------------------------------------------------------
 # Professional SaaS dark-mode stylesheet
@@ -62,23 +63,23 @@ html, body, [class*="css"] {
 
 /* ── Sidebar ──────────────────────────────────────────────────────────── */
 [data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #05050f 0%, #0A0A1A 60%, #0d0d22 100%) !important;
-    border-right: 1px solid rgba(255,255,255,0.06) !important;
+    background: linear-gradient(180deg, #2A2826 0%, #32302F 60%, #3E3B39 100%) !important;
+    border-right: 1px solid rgba(255,255,255,0.08) !important;
 }
-[data-testid="stSidebar"] .stMarkdown { color: #C8D0DA !important; }
-[data-testid="stSidebar"] hr { border-color: rgba(255,255,255,0.08) !important; }
+[data-testid="stSidebar"] .stMarkdown { color: #D4CFC9 !important; }
+[data-testid="stSidebar"] hr { border-color: rgba(255,255,255,0.10) !important; }
 [data-testid="stSidebar"] .stRadio label {
     font-size: 0.88rem !important;
-    color: #C8D0DA !important;
+    color: #D4CFC9 !important;
     padding: 2px 0 !important;
     transition: color 0.15s;
 }
-[data-testid="stSidebar"] .stRadio label:hover { color: #fff !important; }
+[data-testid="stSidebar"] .stRadio label:hover { color: #EEF4F4 !important; }
 
 /* ── Metric cards ─────────────────────────────────────────────────────── */
 [data-testid="stMetric"] {
-    background: rgba(255,255,255,0.03) !important;
-    border: 1px solid rgba(255,255,255,0.07) !important;
+    background: rgba(255,255,255,0.04) !important;
+    border: 1px solid rgba(255,255,255,0.09) !important;
     border-radius: 10px !important;
     padding: 14px 18px !important;
 }
@@ -86,14 +87,14 @@ html, body, [class*="css"] {
     font-size: 0.75rem !important;
     font-weight: 500 !important;
     letter-spacing: 0.04em !important;
-    color: #90A4AE !important;
+    color: #A09C98 !important;
     text-transform: uppercase !important;
 }
 [data-testid="stMetricValue"] {
     font-size: 1.9rem !important;
     font-weight: 700 !important;
     letter-spacing: -0.02em !important;
-    color: #FFFFFF !important;
+    color: #EEF4F4 !important;
 }
 [data-testid="stMetricDelta"] { font-size: 0.82rem !important; }
 
@@ -116,16 +117,16 @@ div[data-testid="stExpander"] details summary:hover {
 
 /* ── Buttons ──────────────────────────────────────────────────────────── */
 [data-testid="stBaseButton-primary"] {
-    background: linear-gradient(135deg, #00C853, #00A045) !important;
+    background: linear-gradient(135deg, #1DB954, #17954A) !important;
     border: none !important;
     border-radius: 8px !important;
     font-weight: 600 !important;
     letter-spacing: 0.02em !important;
-    box-shadow: 0 2px 12px rgba(0,200,83,0.25) !important;
+    box-shadow: 0 2px 12px rgba(29,185,84,0.25) !important;
     transition: box-shadow 0.2s, transform 0.1s !important;
 }
 [data-testid="stBaseButton-primary"]:hover {
-    box-shadow: 0 4px 20px rgba(0,200,83,0.4) !important;
+    box-shadow: 0 4px 20px rgba(29,185,84,0.4) !important;
     transform: translateY(-1px) !important;
 }
 [data-testid="stBaseButton-secondary"] {
@@ -147,9 +148,9 @@ div[data-testid="stExpander"] details summary:hover {
     background: transparent !important;
 }
 [data-testid="stTabs"] [aria-selected="true"] {
-    background: rgba(0,200,83,0.12) !important;
-    color: #00C853 !important;
-    border-bottom: 2px solid #00C853 !important;
+    background: rgba(29,185,84,0.12) !important;
+    color: #1DB954 !important;
+    border-bottom: 2px solid #1DB954 !important;
 }
 
 /* ── DataFrames / Tables ──────────────────────────────────────────────── */
@@ -159,14 +160,14 @@ div[data-testid="stExpander"] details summary:hover {
     overflow: hidden !important;
 }
 .stDataFrame tbody tr:hover td {
-    background: rgba(0,200,83,0.06) !important;
+    background: rgba(29,185,84,0.06) !important;
 }
 
 /* ── Info / Warning / Error banners ──────────────────────────────────── */
-[data-testid="stInfo"]    { border-left: 3px solid #2979FF !important; border-radius: 8px !important; }
-[data-testid="stWarning"] { border-left: 3px solid #FFD600 !important; border-radius: 8px !important; }
-[data-testid="stError"]   { border-left: 3px solid #FF1744 !important; border-radius: 8px !important; }
-[data-testid="stSuccess"] { border-left: 3px solid #00C853 !important; border-radius: 8px !important; }
+[data-testid="stInfo"]    { border-left: 3px solid #83A6A8 !important; border-radius: 8px !important; }
+[data-testid="stWarning"] { border-left: 3px solid #F6BA40 !important; border-radius: 8px !important; }
+[data-testid="stError"]   { border-left: 3px solid #ED603C !important; border-radius: 8px !important; }
+[data-testid="stSuccess"] { border-left: 3px solid #1DB954 !important; border-radius: 8px !important; }
 
 /* ── Custom card component ────────────────────────────────────────────── */
 .ws-card {
@@ -176,24 +177,24 @@ div[data-testid="stExpander"] details summary:hover {
     padding: 20px 24px;
     margin-bottom: 12px;
 }
-.ws-card-accent-green  { border-left: 3px solid #00C853 !important; }
-.ws-card-accent-blue   { border-left: 3px solid #2979FF !important; }
-.ws-card-accent-red    { border-left: 3px solid #FF1744 !important; }
-.ws-card-accent-amber  { border-left: 3px solid #FF8F00 !important; }
+.ws-card-accent-green  { border-left: 3px solid #1DB954 !important; }
+.ws-card-accent-blue   { border-left: 3px solid #83A6A8 !important; }
+.ws-card-accent-red    { border-left: 3px solid #ED603C !important; }
+.ws-card-accent-amber  { border-left: 3px solid #F6BA40 !important; }
 .ws-card h3, .ws-card h4 { margin-top: 0 !important; }
 
 /* ── Status dots ──────────────────────────────────────────────────────── */
-@keyframes pulse-green { 0%,100%{box-shadow:0 0 0 0 rgba(0,200,83,.4)} 50%{box-shadow:0 0 0 5px rgba(0,200,83,0)} }
-@keyframes pulse-amber { 0%,100%{box-shadow:0 0 0 0 rgba(255,143,0,.4)} 50%{box-shadow:0 0 0 5px rgba(255,143,0,0)} }
-@keyframes pulse-red   { 0%,100%{box-shadow:0 0 0 0 rgba(255,23,68,.4)}  50%{box-shadow:0 0 0 5px rgba(255,23,68,0)} }
+@keyframes pulse-green { 0%,100%{box-shadow:0 0 0 0 rgba(29,185,84,.4)} 50%{box-shadow:0 0 0 5px rgba(29,185,84,0)} }
+@keyframes pulse-amber { 0%,100%{box-shadow:0 0 0 0 rgba(246,186,64,.4)} 50%{box-shadow:0 0 0 5px rgba(246,186,64,0)} }
+@keyframes pulse-red   { 0%,100%{box-shadow:0 0 0 0 rgba(237,96,60,.4)}  50%{box-shadow:0 0 0 5px rgba(237,96,60,0)} }
 .status-dot {
     display: inline-block; width: 8px; height: 8px;
     border-radius: 50%; vertical-align: middle; margin-right: 6px;
 }
-.status-dot-green { background:#00C853; animation: pulse-green 2s infinite; }
-.status-dot-amber { background:#FF8F00; animation: pulse-amber 2s infinite; }
-.status-dot-red   { background:#FF1744; animation: pulse-red   1.5s infinite; }
-.status-dot-gray  { background:#546E7A; }
+.status-dot-green { background:#1DB954; animation: pulse-green 2s infinite; }
+.status-dot-amber { background:#F6BA40; animation: pulse-amber 2s infinite; }
+.status-dot-red   { background:#ED603C; animation: pulse-red   1.5s infinite; }
+.status-dot-gray  { background:#A09C98; }
 
 /* ── Page header bar ──────────────────────────────────────────────────── */
 .ws-page-header {
@@ -203,12 +204,12 @@ div[data-testid="stExpander"] details summary:hover {
     margin-bottom: 20px;
 }
 .ws-page-title { font-size: 1.55rem; font-weight: 700; letter-spacing: -0.02em; }
-.ws-page-subtitle { font-size: 0.85rem; color: #90A4AE; margin-top: 2px; }
+.ws-page-subtitle { font-size: 0.85rem; color: #A09C98; margin-top: 2px; }
 
 /* ── Section headers ──────────────────────────────────────────────────── */
 .ws-section-header {
     font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em;
-    text-transform: uppercase; color: #546E7A;
+    text-transform: uppercase; color: #7A7572;
     margin: 20px 0 10px 0; padding-bottom: 6px;
     border-bottom: 1px solid rgba(255,255,255,0.05);
 }
@@ -219,15 +220,15 @@ div[data-testid="stExpander"] details summary:hover {
     font-size: 0.72rem; font-weight: 600; letter-spacing: 0.03em;
     vertical-align: middle; margin-left: 4px;
 }
-.ws-badge-green  { background: rgba(0,200,83,.15);  color: #00C853; }
-.ws-badge-red    { background: rgba(255,23,68,.15);  color: #FF1744; }
-.ws-badge-amber  { background: rgba(255,143,0,.15);  color: #FF8F00; }
-.ws-badge-blue   { background: rgba(41,121,255,.15); color: #2979FF; }
-.ws-badge-gray   { background: rgba(144,164,174,.15);color: #90A4AE; }
+.ws-badge-green  { background: rgba(29,185,84,.15);   color: #1DB954; }
+.ws-badge-red    { background: rgba(237,96,60,.15);   color: #ED603C; }
+.ws-badge-amber  { background: rgba(246,186,64,.15);  color: #F6BA40; }
+.ws-badge-blue   { background: rgba(131,166,168,.15); color: #83A6A8; }
+.ws-badge-gray   { background: rgba(160,156,152,.15); color: #A09C98; }
 
 /* ── Progress bars ────────────────────────────────────────────────────── */
 [data-testid="stProgress"] > div > div {
-    background: linear-gradient(90deg, #00C853, #00A045) !important;
+    background: linear-gradient(90deg, #1DB954, #17954A) !important;
     border-radius: 4px !important;
 }
 
@@ -249,26 +250,26 @@ hr { border-color: rgba(255,255,255,0.07) !important; margin: 16px 0 !important;
 WS_PLOTLY_LAYOUT = dict(
     paper_bgcolor="rgba(0,0,0,0)",
     plot_bgcolor="rgba(0,0,0,0)",
-    font=dict(family="Inter, sans-serif", color="#C8D0DA", size=12),
+    font=dict(family="Inter, sans-serif", color="#D4CFC9", size=12),
     xaxis=dict(
-        gridcolor="rgba(255,255,255,0.05)",
-        zerolinecolor="rgba(255,255,255,0.08)",
+        gridcolor="rgba(255,255,255,0.06)",
+        zerolinecolor="rgba(255,255,255,0.09)",
         tickfont=dict(size=11),
     ),
     yaxis=dict(
-        gridcolor="rgba(255,255,255,0.05)",
-        zerolinecolor="rgba(255,255,255,0.08)",
+        gridcolor="rgba(255,255,255,0.06)",
+        zerolinecolor="rgba(255,255,255,0.09)",
         tickfont=dict(size=11),
     ),
     legend=dict(
-        bgcolor="rgba(255,255,255,0.03)",
-        bordercolor="rgba(255,255,255,0.08)",
+        bgcolor="rgba(255,255,255,0.04)",
+        bordercolor="rgba(255,255,255,0.09)",
         borderwidth=1,
         font=dict(size=11),
     ),
     margin=dict(l=12, r=12, t=28, b=12),
     hoverlabel=dict(
-        bgcolor="#1A1A2E",
+        bgcolor="#32302F",
         bordercolor="rgba(255,255,255,0.15)",
         font=dict(family="Inter, sans-serif", size=12),
     ),
@@ -276,10 +277,10 @@ WS_PLOTLY_LAYOUT = dict(
 
 
 def apply_ws_theme(fig, height: int = 320, title: str = "") -> go.Figure:
-    """Apply the WS dark theme to any Plotly figure."""
+    """Apply the WS brand theme to any Plotly figure."""
     layout_kwargs = dict(WS_PLOTLY_LAYOUT, height=height)
     if title:
-        layout_kwargs["title"] = dict(text=title, font=dict(size=13, color="#C8D0DA"), x=0, pad=dict(l=0))
+        layout_kwargs["title"] = dict(text=title, font=dict(size=13, color="#D4CFC9"), x=0, pad=dict(l=0))
     fig.update_layout(**layout_kwargs)
     return fig
 
@@ -310,7 +311,7 @@ def render_card(title: str, body: str, accent: str = "green", extra_style: str =
     return f"""
 <div class="ws-card ws-card-accent-{accent}" style="{extra_style}">
   <div style="font-size:0.82rem;font-weight:600;letter-spacing:0.05em;
-              text-transform:uppercase;color:#546E7A;margin-bottom:8px;">{title}</div>
+              text-transform:uppercase;color:#7A7572;margin-bottom:8px;">{title}</div>
   <div>{body}</div>
 </div>"""
 
@@ -364,16 +365,16 @@ def safe_page(func):
             st.markdown(f"""
 <div class="ws-card ws-card-accent-red">
   <div style="font-size:0.8rem;font-weight:600;letter-spacing:0.06em;
-              text-transform:uppercase;color:#FF1744;margin-bottom:8px;">
+              text-transform:uppercase;color:#ED603C;margin-bottom:8px;">
     {render_status_dot('error')} Component Error
   </div>
-  <div style="font-size:0.95rem;color:#ECEFF1;margin-bottom:8px;">
+  <div style="font-size:0.95rem;color:#EEF4F4;margin-bottom:8px;">
     <strong>{func.__name__}</strong> encountered an issue. The rest of the platform continues normally.
   </div>
   <details style="margin-top:10px;">
-    <summary style="cursor:pointer;color:#90A4AE;font-size:0.82rem;">Technical details</summary>
-    <pre style="margin-top:8px;padding:10px;background:rgba(255,23,68,0.06);
-                border-radius:6px;font-size:0.78rem;color:#FF6B6B;overflow:auto;">{tb.format_exc()}</pre>
+    <summary style="cursor:pointer;color:#A09C98;font-size:0.82rem;">Technical details</summary>
+    <pre style="margin-top:8px;padding:10px;background:rgba(237,96,60,0.06);
+                border-radius:6px;font-size:0.78rem;color:#ED603C;overflow:auto;">{tb.format_exc()}</pre>
   </details>
 </div>
 """, unsafe_allow_html=True)
@@ -391,6 +392,39 @@ from src.shared.queue import event_queue
 from src.shared.latency import latency_tracker
 from src.shared.scorecard import build_triage_scorecard, build_pulse_event_scorecard
 from src.pulse.orchestrator import PulseOrchestrator
+import streamlit.components.v1 as components
+
+
+def render_mermaid(diagram: str, height: int = 500) -> None:
+    """Render a Mermaid diagram using the Mermaid.js CDN."""
+    html = f"""
+<div id="mermaid-diagram" style="background:transparent;">
+<div class="mermaid" style="background:transparent;">{diagram}</div>
+</div>
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({{
+    startOnLoad: true,
+    theme: 'dark',
+    themeVariables: {{
+      primaryColor: '#3E3B39',
+      primaryTextColor: '#EEF4F4',
+      primaryBorderColor: '#1DB954',
+      lineColor: '#A09C98',
+      secondaryColor: '#32302F',
+      tertiaryColor: '#3E3B39',
+      background: '#32302F',
+      mainBkg: '#3E3B39',
+      nodeBorder: '#1DB954',
+      clusterBkg: '#2A2826',
+      titleColor: '#EEF4F4',
+      edgeLabelBackground: '#32302F',
+      fontFamily: 'Inter, sans-serif'
+    }}
+  }});
+</script>
+"""
+    components.html(html, height=height, scrolling=True)
 
 
 @st.cache_resource
@@ -865,7 +899,7 @@ by the Pattern Discovery agent that surfaces missed typologies.
         feat_df = pd.DataFrame(features, columns=["Feature", "Importance"])
         feat_df["Feature"] = feat_df["Feature"].str.replace("_", " ").str.title()
         fig = px.bar(feat_df, x="Importance", y="Feature", orientation="h", color="Importance",
-                     color_continuous_scale=["#2979FF", "#FFD600", "#FF1744"])
+                     color_continuous_scale=["#83A6A8", "#F6BA40", "#ED603C"])
         fig.update_layout(height=400, margin=dict(l=10, r=10, t=10, b=10), yaxis=dict(autorange="reversed"), showlegend=False)
         st.plotly_chart(fig, use_container_width=True)
 
@@ -1059,7 +1093,7 @@ def page_observability():
             agg = sdf.groupby("Tool")["Duration (ms)"].agg(["mean", "max", "count"]).reset_index()
             agg.columns = ["Tool", "Avg (ms)", "Max (ms)", "Calls"]
             fig = px.bar(agg, x="Avg (ms)", y="Tool", orientation="h", color="Avg (ms)",
-                         color_continuous_scale=["#00C853", "#FFD600", "#FF1744"])
+                         color_continuous_scale=["#1DB954", "#F6BA40", "#ED603C"])
             fig.update_layout(height=350, margin=dict(l=10, r=10, t=10, b=10), yaxis=dict(autorange="reversed"), showlegend=False)
             st.plotly_chart(fig, use_container_width=True)
 
@@ -1191,7 +1225,7 @@ def page_cache():
         st.markdown("#### Hit Rate by Region")
         if active:
             fig = px.bar(rdf, x="region", y="hit_rate", color="hit_rate",
-                         color_continuous_scale=["#FF1744", "#FFD600", "#00C853"],
+                         color_continuous_scale=["#ED603C", "#F6BA40", "#1DB954"],
                          range_color=[0, 1])
             fig.update_layout(height=350, margin=dict(t=10, b=10), yaxis_title="Hit Rate", showlegend=False)
             st.plotly_chart(fig, use_container_width=True)
@@ -1343,9 +1377,77 @@ def page_architecture():
     telemetry_bus.emit(EventType.PAGE_VIEW, {"page": "Architecture"}, component="dashboard")
     render_page_header("System Architecture", "Cloud-native, deployment-agnostic design. Built for Wealthsimple's scale.")
 
-    tab_pipeline, tab_infra, tab_patterns, tab_data, tab_scale = st.tabs([
-        "Agent Pipeline", "Infrastructure & Deployment", "System Design Patterns", "Data Architecture", "Scaling Simulation"
+    tab_agentic, tab_pipeline, tab_infra, tab_patterns, tab_data, tab_scale = st.tabs([
+        "Agentic Architecture", "Agent Pipeline", "Infrastructure & Deployment", "System Design Patterns", "Data Architecture", "Scaling Simulation"
     ])
+
+    with tab_agentic:
+        st.markdown("### Platform Agentic Architecture")
+        st.markdown(
+            "Both systems share a common production backbone. "
+            "WS Clarity handles back-office compliance; WS Pilot handles client intelligence. "
+            "Every agent step is PII-masked, latency-tracked, cached, and observable."
+        )
+
+        render_mermaid("""
+flowchart TD
+    subgraph clarity ["WS Clarity — Compliance Intelligence"]
+        direction TB
+        A1["Alert Ingestion<br/>(Kafka / SQS / Internal Bus)"]
+        A2["Triage Agent<br/>XGBoost · 24 features · sub-2ms"]
+        A3{"Priority<br/>Routing"}
+        A4["AUTO-CLOSE<br/>80% false positives"]
+        A5["Investigation Agent<br/>LangGraph State Machine<br/>9 tool nodes"]
+        A6["RAG Retrieval<br/>FINTRAC guidance · ChromaDB"]
+        A7["Report Generator<br/>LLM / Template · STR narrative"]
+        A8["Human Compliance Officer<br/>Approve · Reject · Escalate"]
+        A9["Pattern Discovery<br/>K-Means / DBSCAN"]
+        A1 --> A2 --> A3
+        A3 -->|Low confidence| A4
+        A3 -->|High or Medium| A5
+        A5 <--> A6
+        A5 --> A7
+        A7 --> A8
+        A8 -->|File STR| FINTRAC["FINTRAC Filing"]
+        A9 -.->|Typology feedback| A2
+    end
+
+    subgraph pilot ["WS Pilot — Client Financial Intelligence"]
+        direction TB
+        B1["Financial Event<br/>Paycheck · Earnings · Market Drop"]
+        B2["Event Detector<br/>6 event types · priority scoring"]
+        B3["Portfolio Analyzer<br/>Personalized impact per user"]
+        B4["RAG Retrieval<br/>Tax rules · Investment principles"]
+        B5["Recommendation Agent<br/>Personalized · Tax-aware"]
+        B6["Human Approval Gate<br/>Approve · Adjust · Dismiss"]
+        B1 --> B2 --> B3 --> B4 --> B5 --> B6
+    end
+
+    subgraph infra ["Shared Production Infrastructure"]
+        direction LR
+        I1["PII Masking<br/>Field-level tokenization"]
+        I2["Redis Event Queue<br/>Priority · DLQ · Backpressure"]
+        I3["Semantic Cache<br/>Multi-region TTL"]
+        I4["Latency Tracker<br/>P50/P90/P95/P99"]
+        I5["Model Scorecards<br/>OSFI E-23 aligned"]
+        I6["Observability<br/>Langfuse · Telemetry bus"]
+    end
+
+    clarity --- infra
+    pilot --- infra
+""", height=620)
+
+        st.markdown("""
+| Layer | WS Clarity | WS Pilot | Shared |
+|-------|-----------|----------|--------|
+| **Orchestration** | LangGraph (9-node state machine) | LangGraph (event pipeline) | — |
+| **ML Model** | XGBoost triage (24 features, < 2ms) | Event classifier | — |
+| **RAG** | FINTRAC regulatory guidance | Tax & investment principles | ChromaDB + sentence-transformers |
+| **LLM** | GPT-4o-mini (STR narrative) | GPT-4o-mini (recommendations) | LangChain |
+| **Queue** | Alert ingestion stream | Financial event stream | Redis Streams |
+| **Cache** | Investigation results | Event recommendations | Redis + in-memory fallback |
+| **Human gate** | STR filing approval | Recommendation approval | — |
+""")
 
     with tab_pipeline:
         st.markdown("""
@@ -1528,7 +1630,7 @@ def page_architecture():
 │  │                                                                      │      │
 │  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐                 │      │
 │  │  │ Dashboard   │  │ Pipeline    │  │ Redis       │                 │      │
-│  │  │ Pod (x2)    │  │ Worker (x4) │  │ Sentinel    │                 │      │
+│  │  │ Pod (x2)    │  │ Worker (x4) │  │ Clarity     │                 │      │
 │  │  └─────────────┘  └─────────────┘  └─────────────┘                 │      │
 │  │                                                                      │      │
 │  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐                 │      │
@@ -1779,7 +1881,7 @@ AMLAlert                               STRReport
 <strong>${daily_alerts * (investigation_time_ms/1000/3600) * 55:.0f}/day</strong> for manual review
 ({daily_alerts * (investigation_time_ms/1000/3600) * 55 / max(total_cost_day, 0.01):.0f}x cost ratio).
 With {num_workers} workers at {investigation_time_ms}ms per investigation, the system processes
-{pipeline_cap:.0f} investigations/minute — {'<span style="color:#FF8F00">add workers as volume grows</span>' if saturation_pct > 90 else '<span style="color:#00C853">well within capacity</span>'}.
+{pipeline_cap:.0f} investigations/minute — {'<span style="color:#F6BA40">add workers as volume grows</span>' if saturation_pct > 90 else '<span style="color:#1DB954">well within capacity</span>'}.
 </div>""", unsafe_allow_html=True)
 
 
@@ -2010,10 +2112,10 @@ def page_submission():
     st.markdown("""
 <div style='text-align:center; padding: 10px 0 5px 0;'>
 <h1 style='margin-bottom:0; letter-spacing:-0.03em;'>WS Intelligence Platform</h1>
-<p style='color: #90A4AE; font-size:1.1rem; margin-top:5px;'>
+<p style='color: #A09C98; font-size:1.1rem; margin-top:5px;'>
 AI-Native Intelligence for Both Sides of the House
 </p>
-<p style='color: #546E7A; font-size:0.9rem; margin-top:4px;'>
+<p style='color: #7A7572; font-size:0.9rem; margin-top:4px;'>
 Built for the Wealthsimple AI Builders Program
 </p>
 </div>
@@ -2026,13 +2128,13 @@ Built for the Wealthsimple AI Builders Program
 
     with col1:
         st.markdown(f"""
-<div style='border: 2px solid {WS_GREEN}; border-radius: 12px; padding: 24px; background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);'>
-<h2 style='color: {WS_GREEN}; margin-top:0;'>WS Sentinel</h2>
+<div style='border: 2px solid {WS_GREEN}; border-radius: 12px; padding: 24px; background: linear-gradient(135deg, #2A2826 0%, #32302F 100%);'>
+<h2 style='color: {WS_GREEN}; margin-top:0;'>WS Clarity</h2>
 <p style='color: {WS_GRAY}; font-style: italic; margin-bottom: 16px;'>Compliance Intelligence</p>
-<p style='color: #c9d1d9; font-size: 1.05rem;'>
+<p style='color: #EEF4F4; font-size: 1.05rem;'>
 AI that investigates so your analysts can decide.
 </p>
-<p style='color: #c9d1d9; font-size: 0.9rem;'>
+<p style='color: #D4CFC9; font-size: 0.9rem;'>
 Multi-agent AML investigation pipeline: alert triage, LangGraph investigation,
 FINTRAC-ready STR reports, and pattern discovery. Processes alerts in &lt; 20ms,
 auto-closing 80% of false positives.
@@ -2043,19 +2145,19 @@ auto-closing 80% of false positives.
         c1.metric("Annual Savings", "$1.65M")
         c2.metric("Investigation", "17ms")
         c3.metric("FP Auto-Close", "80%")
-        if st.button("Launch Sentinel Demo", type="primary", use_container_width=True):
-            st.session_state.nav_target = "Sentinel Demo"
+        if st.button("Launch Clarity Demo", type="primary", use_container_width=True):
+            st.session_state.nav_target = "Clarity Demo"
             st.rerun()
 
     with col2:
         st.markdown(f"""
-<div style='border: 2px solid {WS_BLUE}; border-radius: 12px; padding: 24px; background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);'>
-<h2 style='color: {WS_BLUE}; margin-top:0;'>WS Pulse</h2>
+<div style='border: 2px solid {WS_TEAL}; border-radius: 12px; padding: 24px; background: linear-gradient(135deg, #2A2826 0%, #32302F 100%);'>
+<h2 style='color: {WS_TEAL}; margin-top:0;'>WS Pilot</h2>
 <p style='color: {WS_GRAY}; font-style: italic; margin-bottom: 16px;'>Client Financial Intelligence</p>
-<p style='color: #c9d1d9; font-size: 1.05rem;'>
+<p style='color: #EEF4F4; font-size: 1.05rem;'>
 AI that turns every financial moment into the right action.
 </p>
-<p style='color: #c9d1d9; font-size: 0.9rem;'>
+<p style='color: #D4CFC9; font-size: 0.9rem;'>
 Event-driven pipeline: detects paychecks, earnings, market moves, then generates
 personalized, tax-aware recommendations for each user's unique portfolio.
 Same event, different advice for every user.
@@ -2066,8 +2168,8 @@ Same event, different advice for every user.
         c1.metric("Per-Event Cost", "$0.002")
         c2.metric("Users Served", "3M+")
         c3.metric("Response", "< 1 sec")
-        if st.button("Launch Pulse Demo", type="primary", use_container_width=True):
-            st.session_state.nav_target = "Pulse Walkthrough"
+        if st.button("Launch Pilot Demo", type="primary", use_container_width=True):
+            st.session_state.nav_target = "Pilot Walkthrough"
             st.rerun()
 
     # ── Shared Infrastructure Callout ──
@@ -2235,7 +2337,7 @@ The AI makes the officer's job better, not unnecessary.
 
 | Method | Command |
 |--------|---------|
-| **Interactive dashboard** | You're looking at it. Explore Sentinel, Pulse, and Shared Infrastructure sections. |
+| **Interactive dashboard** | You're looking at it. Explore Clarity, Pilot, and Shared Infrastructure sections. |
 | **Terminal demo** | `python scripts/demo.py` (runs both pipelines, shows results) |
 | **Docker (with Redis)** | `docker-compose up --build` then open `localhost:8501` |
 | **AWS deployment** | `aws cloudformation create-stack` with `deploy/cloudformation.yaml` |
@@ -2273,7 +2375,7 @@ The AI makes the officer's job better, not unnecessary.
 
     st.markdown("---")
     st.markdown("""
-<div style='text-align:center; padding: 20px 0; color: #90A4AE;'>
+<div style='text-align:center; padding: 20px 0; color: #A09C98;'>
 <p style='font-size: 0.9rem;'>
 Built with LangGraph, XGBoost, LangChain, Langfuse, Redis, ChromaDB, Streamlit, and Plotly.<br>
 2 AI systems. 8 agents. Shared production infrastructure (PII, queuing, latency, scorecards).<br>
@@ -2358,9 +2460,9 @@ def page_knowledge_base():
 
                 for i, r in enumerate(ctx.results, 1):
                     relevance_color = (
-                        "#00C853" if r.relevance_score > 0.6
-                        else "#FFA726" if r.relevance_score > 0.3
-                        else "#EF5350"
+                        "#1DB954" if r.relevance_score > 0.6
+                        else "#F6BA40" if r.relevance_score > 0.3
+                        else "#ED603C"
                     )
                     st.markdown(
                         f"### {i}. {r.title} "
@@ -2516,8 +2618,8 @@ Top-K results (filtered by relevance threshold)
 
 @safe_page
 def page_pulse_walkthrough():
-    telemetry_bus.emit(EventType.PAGE_VIEW, {"page": "Pulse Walkthrough"}, component="dashboard")
-    render_page_header("WS Pulse — Demo Walkthrough", "Same event, completely different AI reasoning for every user. That's the point.")
+    telemetry_bus.emit(EventType.PAGE_VIEW, {"page": "Pilot Walkthrough"}, component="dashboard")
+    render_page_header("WS Pilot — Demo Walkthrough", "Same event, completely different AI reasoning for every user. That's the point.")
 
     pulse = get_pulse()
     portfolios = pulse.portfolios
@@ -2538,11 +2640,11 @@ def page_pulse_walkthrough():
             risk_color = {"conservative": WS_BLUE, "moderate": WS_GREEN, "growth": WS_GOLD, "aggressive": WS_RED}.get(
                 p.goals.risk_profile.value, WS_GRAY)
             st.markdown(f"""
-<div style='border: 1px solid #30363d; border-radius: 10px; padding: 16px; background: #0d1117; min-height: 280px;'>
-<h4 style='margin-top:0; color: #e6edf3;'>{p.display_name}</h4>
+<div style='border: 1px solid #4A4745; border-radius: 10px; padding: 16px; background: #2A2826; min-height: 280px;'>
+<h4 style='margin-top:0; color: #EEF4F4;'>{p.display_name}</h4>
 <p style='color: {WS_GRAY}; margin: 4px 0;'>{p.age}yo, {p.province} — {p.occupation}</p>
-<hr style='border-color: #21262d; margin: 8px 0;'>
-<p style='color: #e6edf3; font-size: 1.3rem; font-weight: bold;'>${p.total_value:,.0f}</p>
+<hr style='border-color: #4A4745; margin: 8px 0;'>
+<p style='color: #EEF4F4; font-size: 1.3rem; font-weight: bold;'>${p.total_value:,.0f}</p>
 <p style='color: {WS_GRAY}; font-size: 0.85rem;'>{len(p.accounts)} accounts, {len(p.all_holdings)} holdings</p>
 <p style='color: {risk_color}; font-weight: bold; font-size: 0.9rem;'>{p.goals.risk_profile.value.upper()} risk</p>
 <p style='color: {WS_GRAY}; font-size: 0.85rem;'>Premium: {'Yes' if p.goals.has_premium else 'No'}</p>
@@ -2579,9 +2681,9 @@ def page_pulse_walkthrough():
 
     priority_color = {"high": WS_RED, "medium": WS_GOLD, "low": WS_GREEN}.get(event.priority.value, WS_GRAY)
     st.markdown(f"""
-<div style='border-left: 4px solid {priority_color}; padding: 16px; background: #161b22; border-radius: 0 8px 8px 0; margin: 8px 0;'>
-<h4 style='margin-top: 0; color: #e6edf3;'>{event.title}</h4>
-<p style='color: #c9d1d9;'>{event.description}</p>
+<div style='border-left: 4px solid {priority_color}; padding: 16px; background: #3E3B39; border-radius: 0 8px 8px 0; margin: 8px 0;'>
+<h4 style='margin-top: 0; color: #EEF4F4;'>{event.title}</h4>
+<p style='color: #D4CFC9;'>{event.description}</p>
 <p style='color: {WS_GRAY}; font-size: 0.85rem;'>
 Type: <strong>{event.event_type.value}</strong> |
 Priority: <span style='color: {priority_color};'>{event.priority.value.upper()}</span> |
@@ -2600,7 +2702,7 @@ Users impacted: {len(event.affected_users)}
         st.session_state[demo_key] = None
 
     if st.button("Process This Event", type="primary", use_container_width=True, key="pulse_process_btn"):
-        with st.spinner("Running Pulse pipeline for each user..."):
+        with st.spinner("Running Pilot pipeline for each user..."):
             try:
                 demo_results = {}
                 for uid in showcase_ids:
@@ -2619,8 +2721,8 @@ Users impacted: {len(event.affected_users)}
                     st.session_state.pulse_results = list(demo_results.values())
                 else:
                     st.session_state.pulse_results.extend(demo_results.values())
-                # Keep user on Pulse Walkthrough after rerun
-                st.session_state["nav_target"] = "Pulse Walkthrough"
+                # Keep user on Pilot Walkthrough after rerun
+                st.session_state["nav_target"] = "Pilot Walkthrough"
                 st.rerun()
             except Exception as e:
                 st.error(f"Pipeline failed: {e}")
@@ -2643,8 +2745,8 @@ Users impacted: {len(event.affected_users)}
         with cols[i]:
             if rec is None:
                 st.markdown(f"""
-<div style='border: 1px solid #30363d; border-radius: 10px; padding: 16px; background: #0d1117;'>
-<h5 style='margin-top:0; color: #e6edf3;'>{p.display_name}</h5>
+<div style='border: 1px solid #4A4745; border-radius: 10px; padding: 16px; background: #2A2826;'>
+<h5 style='margin-top:0; color: #EEF4F4;'>{p.display_name}</h5>
 <p style='color: {WS_GRAY};'>Not relevant to this user's portfolio.</p>
 <p style='color: {WS_GRAY}; font-size: 0.8rem;'>Processed in {result.processing_time_ms:.1f}ms</p>
 </div>
@@ -2653,10 +2755,10 @@ Users impacted: {len(event.affected_users)}
 
             action_color = WS_GREEN if rec.action.value in ("hold", "allocate_tfsa", "allocate_rrsp", "build_emergency_fund", "increase_contribution") else WS_GOLD if rec.action.value in ("rebalance", "review_concentration") else WS_RED
             st.markdown(f"""
-<div style='border: 1px solid #30363d; border-radius: 10px; padding: 16px; background: #0d1117;'>
-<h5 style='margin-top:0; color: #e6edf3;'>{p.display_name}</h5>
+<div style='border: 1px solid #4A4745; border-radius: 10px; padding: 16px; background: #2A2826;'>
+<h5 style='margin-top:0; color: #EEF4F4;'>{p.display_name}</h5>
 <p style='color: {action_color}; font-weight: bold; font-size: 1.1rem;'>{rec.action_label}</p>
-<p style='color: #c9d1d9; font-size: 0.9rem;'>{rec.impact_summary}</p>
+<p style='color: #D4CFC9; font-size: 0.9rem;'>{rec.impact_summary}</p>
 <p style='color: {WS_GRAY}; font-size: 0.85rem;'>Confidence: {rec.confidence:.0%} | Value: ${rec.estimated_value_cad:,.2f}</p>
 <p style='color: {WS_GRAY}; font-size: 0.8rem;'>Processed in {result.processing_time_ms:.1f}ms</p>
 </div>
@@ -2735,7 +2837,7 @@ Users impacted: {len(event.affected_users)}
 @safe_page
 def page_pulse_portfolios():
     telemetry_bus.emit(EventType.PAGE_VIEW, {"page": "Portfolio Explorer"}, component="dashboard")
-    render_page_header("Pulse: Portfolio Intelligence", "Personalized portfolio analysis for every Wealthsimple user")
+    render_page_header("Pilot: Portfolio Intelligence", "Personalized portfolio analysis for every Wealthsimple user")
 
     pulse = get_pulse()
     portfolios = pulse.portfolios
@@ -2844,10 +2946,10 @@ def page_pulse_portfolios():
 @safe_page
 def page_pulse_recommendations():
     telemetry_bus.emit(EventType.PAGE_VIEW, {"page": "Recommendations"}, component="dashboard")
-    render_page_header("Pulse: Recommendations", "AI-generated financial recommendations with human approval")
+    render_page_header("Pilot: Recommendations", "AI-generated financial recommendations with human approval")
 
     if not st.session_state.pulse_processed:
-        st.info("Run the Pulse pipeline from the Event Feed page first.")
+        st.info("Run the Pilot pipeline from the Event Feed page first.")
         return
 
     pulse = get_pulse()
@@ -2927,7 +3029,7 @@ def page_production_metrics():
     with tab1:
         all_p = latency_tracker.all_percentiles()
         if not all_p:
-            st.info("No latency data yet. Run Sentinel or Pulse pipelines first.")
+            st.info("No latency data yet. Run Clarity or Pilot pipelines first.")
         else:
             sla_summary = latency_tracker.sla_summary()
             c1, c2, c3, c4 = st.columns(4)
@@ -3135,8 +3237,8 @@ def page_system_health():
   <div style="font-size:1.6rem;margin-bottom:6px;">
     {'🟢' if healthy else '🟡'}
   </div>
-  <div style="font-size:0.82rem;font-weight:600;color:#ECEFF1;">{name}</div>
-  <div style="font-size:0.75rem;color:#90A4AE;margin-top:4px;">{detail}</div>
+  <div style="font-size:0.82rem;font-weight:600;color:#EEF4F4;">{name}</div>
+  <div style="font-size:0.75rem;color:#A09C98;margin-top:4px;">{detail}</div>
 </div>""", unsafe_allow_html=True)
 
     st.divider()
@@ -3192,8 +3294,8 @@ def page_system_health():
 <div class="ws-card ws-card-accent-{'green' if pass_rate>=95 else 'amber' if pass_rate>=80 else 'red'}"
      style="text-align:center;padding:28px;">
   <div style="font-size:2.8rem;font-weight:700;color:{color};">{pass_rate:.0f}%</div>
-  <div style="font-size:0.85rem;color:#90A4AE;margin-top:6px;">Overall SLA Pass Rate</div>
-  <div style="font-size:0.78rem;color:#546E7A;margin-top:4px;">
+  <div style="font-size:0.85rem;color:#A09C98;margin-top:6px;">Overall SLA Pass Rate</div>
+  <div style="font-size:0.78rem;color:#7A7572;margin-top:4px;">
     {sla_summary.get('passed',0)} passed · {sla_summary.get('failed',0)} violations
   </div>
 </div>""", unsafe_allow_html=True)
@@ -3216,11 +3318,11 @@ def page_system_health():
     for col, (name, closed, detail) in zip(cb_cols, breakers):
         col.markdown(f"""
 <div class="ws-card ws-card-accent-{'green' if closed else 'amber'}" style="padding:14px 16px;">
-  <div style="font-size:0.78rem;font-weight:600;color:#90A4AE;">{name}</div>
-  <div style="font-size:1.1rem;font-weight:700;color:{'#00C853' if closed else '#FF8F00'};margin:4px 0;">
+  <div style="font-size:0.78rem;font-weight:600;color:#A09C98;">{name}</div>
+  <div style="font-size:1.1rem;font-weight:700;color:{'#1DB954' if closed else '#F6BA40'};margin:4px 0;">
     {'CLOSED' if closed else 'HALF-OPEN'}
   </div>
-  <div style="font-size:0.72rem;color:#546E7A;">{detail}</div>
+  <div style="font-size:0.72rem;color:#7A7572;">{detail}</div>
 </div>""", unsafe_allow_html=True)
 
     st.divider()
@@ -3313,11 +3415,11 @@ def main():
     # ── Sidebar header ────────────────────────────────────────────────────
     st.sidebar.markdown(f"""
 <div style='text-align:center;padding:14px 0 10px 0;'>
-  <div style='font-size:1.25rem;font-weight:700;color:#00C853;letter-spacing:-0.02em;'>WS Intelligence</div>
-  <div style='font-size:0.78rem;color:#546E7A;margin-top:2px;letter-spacing:0.04em;'>SENTINEL + PULSE PLATFORM</div>
+  <div style='font-size:1.25rem;font-weight:700;color:#1DB954;letter-spacing:-0.02em;'>WS Intelligence</div>
+  <div style='font-size:0.78rem;color:#A09C98;margin-top:2px;letter-spacing:0.04em;'>CLARITY + PILOT PLATFORM</div>
   <div style='margin-top:8px;font-size:0.78rem;'>
     {render_status_dot(sys_status)}
-    <span style='color:{"#00C853" if overall_healthy else "#FF8F00"};font-size:0.75rem;'>
+    <span style='color:{"#1DB954" if overall_healthy else "#F6BA40"};font-size:0.75rem;'>
       {'All Systems Operational' if overall_healthy else 'Degraded Mode'}
     </span>
   </div>
@@ -3326,22 +3428,26 @@ def main():
     st.sidebar.divider()
 
     all_pages = {
-        "Launch Demos": page_submission,
-        "Sentinel Demo": page_executive,
-        "Investigation Queue": page_alert_queue,
-        "STR Report Review": page_report_review,
-        "Pulse Walkthrough": page_pulse_walkthrough,
-        "Portfolio Explorer": page_pulse_portfolios,
-        "Recommendations": page_pulse_recommendations,
-        "Production Metrics": page_production_metrics,
-        "Model Intelligence": page_model_intelligence,
+        # HOME
+        "Launch Demos":         page_submission,
+        # WS CLARITY
+        "Clarity Demo":         page_executive,
+        "Investigation Queue":  page_alert_queue,
+        "STR Report Review":    page_report_review,
+        "Pattern Discovery":    page_patterns,
+        # WS PILOT
+        "Pilot Walkthrough":    page_pulse_walkthrough,
+        "Portfolio Explorer":   page_pulse_portfolios,
+        "Recommendations":      page_pulse_recommendations,
+        # INFRASTRUCTURE
+        "Architecture":         page_architecture,
+        "Production Metrics":   page_production_metrics,
+        "Model Intelligence":   page_model_intelligence,
         "Knowledge Base (RAG)": page_knowledge_base,
-        "Observability": page_observability,
-        "Cache Performance": page_cache,
-        "System Health": page_system_health,
-        "Pattern Discovery": page_patterns,
-        "Architecture": page_architecture,
-        "AI Governance": page_governance,
+        "Observability":        page_observability,
+        "Cache Performance":    page_cache,
+        "System Health":        page_system_health,
+        "AI Governance":        page_governance,
     }
 
     nav_target = st.session_state.pop("nav_target", None)
@@ -3350,10 +3456,23 @@ def main():
 
     sla_badge = f" <span class='ws-badge ws-badge-amber'>{sla_violations} SLA</span>" if sla_violations > 0 else ""
 
-    st.sidebar.markdown(f"<p style='color:{WS_GRAY};font-size:0.7rem;letter-spacing:0.1em;font-weight:600;margin-bottom:4px;'>PLATFORM</p>", unsafe_allow_html=True)
-    st.sidebar.markdown(f"<p style='color:{WS_GREEN};font-size:0.7rem;letter-spacing:0.1em;font-weight:600;margin-bottom:4px;margin-top:12px;'>SENTINEL — Compliance</p>", unsafe_allow_html=True)
-    st.sidebar.markdown(f"<p style='color:{WS_BLUE};font-size:0.7rem;letter-spacing:0.1em;font-weight:600;margin-bottom:4px;margin-top:12px;'>PULSE — Client Intelligence</p>", unsafe_allow_html=True)
-    st.sidebar.markdown(f"<p style='color:{WS_GRAY};font-size:0.7rem;letter-spacing:0.1em;font-weight:600;margin-bottom:4px;margin-top:12px;'>INFRASTRUCTURE</p>", unsafe_allow_html=True)
+    _label_style = "font-size:0.68rem;letter-spacing:0.12em;font-weight:700;margin-bottom:2px;margin-top:14px;text-transform:uppercase;"
+    st.sidebar.markdown(
+        f"<p style='{_label_style}color:{WS_GRAY};'>HOME</p>",
+        unsafe_allow_html=True,
+    )
+    st.sidebar.markdown(
+        f"<p style='{_label_style}color:{WS_GREEN};margin-top:10px;'>WS Clarity — Compliance</p>",
+        unsafe_allow_html=True,
+    )
+    st.sidebar.markdown(
+        f"<p style='{_label_style}color:{WS_TEAL};margin-top:10px;'>WS Pilot — Client Intelligence</p>",
+        unsafe_allow_html=True,
+    )
+    st.sidebar.markdown(
+        f"<p style='{_label_style}color:{WS_GRAY};margin-top:10px;'>Infrastructure</p>",
+        unsafe_allow_html=True,
+    )
 
     page = st.sidebar.radio(
         "Navigate",
@@ -3361,21 +3480,21 @@ def main():
         key="_nav_radio",
         label_visibility="collapsed",
         format_func=lambda x: {
-            "Launch Demos":           "  Launch Demos",
-            "Sentinel Demo":          "  Demo & Results",
+            "Launch Demos":           "  Platform Overview",
+            "Clarity Demo":           "  Demo & Results",
             "Investigation Queue":    "  Investigation Queue",
             "STR Report Review":      "  STR Report Review",
-            "Pulse Walkthrough":      "  Demo & Walkthrough",
+            "Pattern Discovery":      "  Pattern Discovery",
+            "Pilot Walkthrough":      "  Demo & Walkthrough",
             "Portfolio Explorer":     "  Portfolio Explorer",
             "Recommendations":        "  Recommendations",
+            "Architecture":           "  Architecture",
             "Production Metrics":     "  Production Metrics",
             "Model Intelligence":     "  Model Intelligence",
-            "Knowledge Base (RAG)":   "  Knowledge Base (RAG)",
+            "Knowledge Base (RAG)":   "  Knowledge Base",
             "Observability":          "  Observability",
             "Cache Performance":      "  Cache Performance",
             "System Health":          "  System Health",
-            "Pattern Discovery":      "  Pattern Discovery",
-            "Architecture":           "  Architecture",
             "AI Governance":          "  AI Governance",
         }.get(x, x),
     )
@@ -3383,17 +3502,21 @@ def main():
     st.sidebar.divider()
 
     # ── Live stats ────────────────────────────────────────────────────────
-    results      = st.session_state.get("pipeline_results", [])
+    results       = st.session_state.get("pipeline_results", [])
     pulse_results = st.session_state.get("pulse_results", [])
 
     if results or pulse_results:
-        st.sidebar.markdown("<div style='font-size:0.72rem;font-weight:600;letter-spacing:0.08em;color:#546E7A;text-transform:uppercase;margin-bottom:6px;'>Live Stats</div>", unsafe_allow_html=True)
+        st.sidebar.markdown(
+            f"<div style='font-size:0.68rem;font-weight:700;letter-spacing:0.10em;"
+            f"color:{WS_GRAY};text-transform:uppercase;margin-bottom:6px;'>Live Stats</div>",
+            unsafe_allow_html=True,
+        )
         if results:
             n    = len(results)
             auto = sum(1 for r in results if r.status == "auto_closed")
-            st.sidebar.metric("Sentinel Alerts", f"{n:,}", f"{auto/max(n,1)*100:.0f}% auto-closed")
+            st.sidebar.metric("Clarity Alerts", f"{n:,}", f"{auto/max(n,1)*100:.0f}% auto-closed")
         if pulse_results:
-            st.sidebar.metric("Pulse Events", f"{len(pulse_results):,}")
+            st.sidebar.metric("Pilot Events", f"{len(pulse_results):,}")
         trace_stats = trace_store.get_stats()
         if trace_stats["total_traces"] > 0:
             st.sidebar.metric("Traces", trace_stats["total_traces"])
@@ -3406,9 +3529,9 @@ def main():
     cache_dot = render_status_dot("healthy" if redis_ok else "degraded")
     queue_dot = render_status_dot("healthy" if not event_queue.health.backpressure_active else "degraded")
     st.sidebar.markdown(
-        f"<div style='font-size:0.78rem;color:#90A4AE;line-height:1.8;'>"
-        f"{cache_dot}<span style='color:#C8D0DA;'>Cache</span> {cache.backend_type.upper()}<br>"
-        f"{queue_dot}<span style='color:#C8D0DA;'>Queue</span> {event_queue.backend_type.upper()}"
+        f"<div style='font-size:0.78rem;color:{WS_GRAY};line-height:1.9;'>"
+        f"{cache_dot}<span style='color:#D4CFC9;'>Cache</span> {cache.backend_type.upper()}<br>"
+        f"{queue_dot}<span style='color:#D4CFC9;'>Queue</span> {event_queue.backend_type.upper()}"
         f"</div>",
         unsafe_allow_html=True,
     )
@@ -3419,8 +3542,20 @@ def main():
 
     st.sidebar.divider()
     st.sidebar.markdown(
-        "<div style='font-size:0.75rem;color:#546E7A;font-style:italic;text-align:center;'>"
-        "AI investigates and recommends.<br>Humans decide and approve.</div>",
+        "<div style='font-size:0.75rem;color:#7A7572;font-style:italic;text-align:center;'>"
+        "WS Clarity + WS Pilot<br>AI proposes. Humans decide.</div>",
+        unsafe_allow_html=True,
+    )
+
+    # ── Version display ───────────────────────────────────────────────────
+    try:
+        _version_file = Path(__file__).parent.parent.parent / "VERSION"
+        _app_version = _version_file.read_text().strip()
+    except Exception:
+        _app_version = "0.1"
+    st.sidebar.markdown(
+        f"<div style='font-size:0.7rem;color:#7A7572;text-align:center;padding-top:4px;'>"
+        f"v{_app_version}</div>",
         unsafe_allow_html=True,
     )
 

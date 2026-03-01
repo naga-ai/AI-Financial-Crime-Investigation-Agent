@@ -1,4 +1,4 @@
-"""LangGraph state machine for the WS Pulse event processing pipeline.
+"""LangGraph state machine for the WS Pilot event processing pipeline.
 
 Pipeline: detect -> analyze -> RAG retrieve -> recommend
 Each step is PII-masked, latency-tracked, and traced.

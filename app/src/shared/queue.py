@@ -2,7 +2,7 @@
 
 Provides priority-based queuing, consumer groups, dead letter queue,
 backpressure management, and idempotency for financial event processing.
-Both WS Sentinel (alerts) and WS Pulse (financial events) use this.
+Both WS Clarity (alerts) and WS Pilot (financial events) use this.
 """
 
 from __future__ import annotations

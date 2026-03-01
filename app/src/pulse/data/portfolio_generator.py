@@ -1,4 +1,4 @@
-"""Generates 10 realistic Canadian investor portfolios for WS Pulse.
+"""Generates 10 realistic Canadian investor portfolios for WS Pilot.
 
 Each portfolio represents a distinct Wealthsimple user persona with
 real tickers, realistic account structures, and financial goals that

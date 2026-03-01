@@ -341,7 +341,7 @@ explanation when asked.
 ]
 
 # ---------------------------------------------------------------------------
-# Financial guidance documents for WS Pulse
+# Financial guidance documents for WS Pilot
 # ---------------------------------------------------------------------------
 
 FINANCIAL_GUIDANCE_DOCUMENTS = [

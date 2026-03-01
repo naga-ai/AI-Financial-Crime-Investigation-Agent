@@ -3,7 +3,7 @@
 End-to-end demo: WS Intelligence Platform
 ==========================================
 
-Demonstrates both WS Sentinel (AML compliance) and WS Pulse (client
+Demonstrates both WS Clarity (AML compliance) and WS Pilot (client
 financial intelligence) pipelines, including shared production
 infrastructure (PII masking, event queuing, latency tracking).
 
@@ -271,7 +271,7 @@ def main():
     demo_observability()
     demo_human_ai_boundary()
 
-    # ── WS Pulse Demo ──
+    # ── WS Pilot Demo ──
     demo_pulse()
 
     print_header("DEMO COMPLETE")
@@ -287,7 +287,7 @@ def main():
 
 
 def demo_pulse():
-    """Demonstrate WS Pulse financial event processing."""
+    """Demonstrate WS Pilot financial event processing."""
     print_header("WS PULSE: CLIENT FINANCIAL INTELLIGENCE")
     print()
 

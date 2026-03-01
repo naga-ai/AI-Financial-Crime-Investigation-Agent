@@ -6,9 +6,9 @@
 
 ## Project Naming
 
-- **WS Sentinel** -- Compliance Intelligence (AML investigation system, already built)
+- **WS Clarity** -- Compliance Intelligence (AML investigation system, already built)
   - *"AI that investigates so your analysts can decide"*
-- **WS Pulse** -- Client Financial Intelligence (Money Moment Orchestrator + Portfolio Intelligence)
+- **WS Pilot** -- Client Financial Intelligence (Money Moment Orchestrator + Portfolio Intelligence)
   - *"AI that turns every financial moment into the right action"*
 - **Unified:** WS Intelligence Platform
   - *"AI-native intelligence for both sides of the house"*
@@ -21,13 +21,13 @@ Same repo. The shared infrastructure is the thesis. One deployment, one demo lin
 
 ```
 WS Intelligence Platform (one repo)
-├── WS Sentinel (Compliance)
+├── WS Clarity (Compliance)
 │   ├── Triage Agent (XGBoost)
 │   ├── Investigation Agent (LangGraph)
 │   ├── Report Generator (LLM/template)
 │   └── Pattern Discovery (K-Means/DBSCAN)
 │
-├── WS Pulse (Client Intelligence)
+├── WS Pilot (Client Intelligence)
 │   ├── Event Detection Agent
 │   ├── Portfolio Analysis Agent
 │   ├── Recommendation Engine
@@ -107,7 +107,7 @@ Applies to both: XGBoost triage (Sentinel) AND event classification (Pulse).
 
 ---
 
-## WS Pulse: What to Build
+## WS Pilot: What to Build
 
 ### Directory Structure
 
@@ -228,8 +228,8 @@ Landing page positions both projects:
 
 > "I built a unified AI intelligence platform for Wealthsimple with two systems:
 >
-> **WS Sentinel** automates financial crime investigation (back-office compliance).
-> **WS Pulse** delivers personalized financial intelligence (client-facing growth).
+> **WS Clarity** automates financial crime investigation (back-office compliance).
+> **WS Pilot** delivers personalized financial intelligence (client-facing growth).
 >
 > Both run on shared production infrastructure: event queuing, PII masking, RAG, multi-agent orchestration, caching, latency tracking, and observability."
 

@@ -1,4 +1,4 @@
-"""Portfolio impact analysis agent for WS Pulse.
+"""Portfolio impact analysis agent for WS Pilot.
 
 Analyzes how a financial event affects a specific user's portfolio,
 computing exposure, concentration risk, tax implications, and

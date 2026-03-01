@@ -1,4 +1,4 @@
-"""WS Pulse pipeline orchestrator.
+"""WS Pilot pipeline orchestrator.
 
 Integrates the event queue, PII masking, latency tracking, caching,
 and the Pulse agent pipeline. Processes financial events into

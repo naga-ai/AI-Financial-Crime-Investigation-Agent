@@ -6,7 +6,7 @@
 
 ## Functional Requirements
 
-### Project 1: WS Sentinel (Compliance Intelligence)
+### Project 1: WS Clarity (Compliance Intelligence)
 - [x] Multi-agent AML investigation pipeline (triage -> investigate -> report)
 - [x] XGBoost triage classifier with 80% false positive detection
 - [x] LangGraph investigation state machine with 8+ tool nodes
@@ -16,7 +16,7 @@
 - [x] Case precedent retrieval for institutional memory
 - [x] Synthetic data: 500 clients, 50K transactions, realistic alerts with 80% false positive rate
 
-### Project 2: WS Pulse (Client Financial Intelligence)
+### Project 2: WS Pilot (Client Financial Intelligence)
 - [ ] Event detection agent (paycheck arrival, earnings report, market drop)
 - [ ] Portfolio analysis agent (personalized impact per user's holdings)
 - [ ] Recommendation engine (tax-aware, actionable, plain-language)

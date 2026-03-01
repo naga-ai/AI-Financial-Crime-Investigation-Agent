@@ -1,4 +1,4 @@
-"""Event detection and classification agent for WS Pulse.
+"""Event detection and classification agent for WS Pilot.
 
 Classifies incoming financial events into types, assigns priority levels,
 and determines which users are affected based on their portfolio holdings.

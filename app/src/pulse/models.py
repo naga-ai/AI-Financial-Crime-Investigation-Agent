@@ -1,4 +1,4 @@
-"""Pydantic data models for WS Pulse -- Client Financial Intelligence.
+"""Pydantic data models for WS Pilot -- Client Financial Intelligence.
 
 Covers portfolios, holdings, financial events, recommendations, and
 user financial goals. All types used by Pulse agents and dashboard.
