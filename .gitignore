@@ -28,3 +28,4 @@ app/models/*.joblib
 # OS
 .DS_Store
 Thumbs.db
+wealthsimple.pem

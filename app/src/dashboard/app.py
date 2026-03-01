@@ -2094,7 +2094,7 @@ def page_pulse_walkthrough():
         if e.event_type.value == "market_drop":
             default_idx = i
 
-    selected_label = st.selectbox("Select event", list(event_labels.keys()), index=default_idx)
+    selected_label = st.selectbox("Select event", list(event_labels.keys()), index=default_idx, key="pulse_event_select")
     event = event_labels[selected_label]
 
     priority_color = {"high": WS_RED, "medium": WS_GOLD, "low": WS_GREEN}.get(event.priority.value, WS_GRAY)
@@ -2119,26 +2119,33 @@ Users impacted: {len(event.affected_users)}
     if demo_key not in st.session_state:
         st.session_state[demo_key] = None
 
-    if st.button("Process This Event", type="primary", use_container_width=True):
+    if st.button("Process This Event", type="primary", use_container_width=True, key="pulse_process_btn"):
         with st.spinner("Running Pulse pipeline for each user..."):
-            demo_results = {}
-            for uid in showcase_ids:
-                p = portfolio_map.get(uid)
-                if p:
-                    result = run_pulse_pipeline(
-                        event=event,
-                        portfolio=p,
-                        all_portfolios=portfolio_map,
-                        rag_engine=pulse._get_rag_engine(),
-                    )
-                    demo_results[uid] = result
-            st.session_state[demo_key] = demo_results
-            if not st.session_state.pulse_processed:
-                st.session_state.pulse_processed = True
-                st.session_state.pulse_results = list(demo_results.values())
-            else:
-                st.session_state.pulse_results.extend(demo_results.values())
-            st.rerun()
+            try:
+                demo_results = {}
+                for uid in showcase_ids:
+                    p = portfolio_map.get(uid)
+                    if p:
+                        result = run_pulse_pipeline(
+                            event=event,
+                            portfolio=p,
+                            all_portfolios=portfolio_map,
+                            rag_engine=pulse._get_rag_engine(),
+                        )
+                        demo_results[uid] = result
+                st.session_state[demo_key] = demo_results
+                if not st.session_state.pulse_processed:
+                    st.session_state.pulse_processed = True
+                    st.session_state.pulse_results = list(demo_results.values())
+                else:
+                    st.session_state.pulse_results.extend(demo_results.values())
+                # Keep user on Pulse Walkthrough after rerun
+                st.session_state["nav_target"] = "Pulse Walkthrough"
+                st.rerun()
+            except Exception as e:
+                st.error(f"Pipeline failed: {e}")
+                import traceback
+                st.code(traceback.format_exc())
 
     demo_results = st.session_state.get(demo_key)
     if not demo_results:
@@ -2632,9 +2639,7 @@ def main():
 
     nav_target = st.session_state.pop("nav_target", None)
     if nav_target and nav_target in all_pages:
-        default_idx = list(all_pages.keys()).index(nav_target)
-    else:
-        default_idx = 0
+        st.session_state["_nav_radio"] = nav_target
 
     st.sidebar.markdown(f"<p style='color:{WS_GRAY}; font-size:0.75rem; letter-spacing:1px; margin-bottom:2px;'>PLATFORM</p>", unsafe_allow_html=True)
     st.sidebar.markdown("")
@@ -2650,7 +2655,7 @@ def main():
     page = st.sidebar.radio(
         "Navigate",
         list(all_pages.keys()),
-        index=default_idx,
+        key="_nav_radio",
         label_visibility="collapsed",
         format_func=lambda x: {
             "Launch Demos": "Launch Demos",

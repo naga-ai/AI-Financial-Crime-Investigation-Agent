@@ -28,7 +28,6 @@ services:
         condition: service_healthy
     volumes:
       - ./models:/app/models
-      - ./src/data/sample:/app/src/data/sample
 
 volumes:
   redis_data:
