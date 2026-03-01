@@ -17,6 +17,15 @@ from typing import Any
 
 from src.config import REDIS_URL
 
+# Lazy import to avoid circular dependency at module init
+def _emit_cache_event(hit: bool, region: str) -> None:
+    try:
+        from src.observability.telemetry import telemetry_bus, EventType
+        event = EventType.CACHE_HIT if hit else EventType.CACHE_MISS
+        telemetry_bus.emit(event, metadata={"region": region}, component="cache")
+    except Exception:
+        pass
+
 
 # ---------------------------------------------------------------------------
 # In-memory backend
@@ -167,8 +176,10 @@ class CacheRegion:
         if hit:
             self.total_hits += 1
             self._latency_saved_ms.append(elapsed_ms)
+            _emit_cache_event(True, self.name)
             return value
         self.total_misses += 1
+        _emit_cache_event(False, self.name)
         return None
 
     def set(self, key: str, value: Any) -> None:
