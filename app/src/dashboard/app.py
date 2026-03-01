@@ -2658,7 +2658,7 @@ def main():
         key="_nav_radio",
         label_visibility="collapsed",
         format_func=lambda x: {
-            "Launch WS Demos": "Launch Demos",
+            "Launch WEALTHSIMPLE Demos": "Launch Demos",
             "Sentinel Demo": "  Demo & Results",
             "Investigation Queue": "  Investigation Queue",
             "STR Report Review": "  STR Report Review",
@@ -2677,7 +2677,7 @@ def main():
     )
 
     st.sidebar.divider()
-    results = st.session_state.get("pipeline_results", [])
+    results = st.session_state.get("wealthsimple_pipeline_results", [])
     pulse_results = st.session_state.get("pulse_results", [])
 
     if results or pulse_results:
