@@ -2658,7 +2658,7 @@ def main():
         key="_nav_radio",
         label_visibility="collapsed",
         format_func=lambda x: {
-            "Launch Demos": "Launch Demos",
+            "Launch WS Demos": "Launch Demos",
             "Sentinel Demo": "  Demo & Results",
             "Investigation Queue": "  Investigation Queue",
             "STR Report Review": "  STR Report Review",
