@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Sidebar from '@/components/Sidebar';
 import OverviewPage from '@/components/pages/OverviewPage';
 import DashboardPage from '@/components/pages/DashboardPage';
@@ -15,6 +15,17 @@ export type Page = 'overview' | 'dashboard' | 'alerts' | 'reports' | 'model' | '
 
 export default function HomePage() {
   const [page, setPage] = useState<Page>('overview');
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+
+  useEffect(() => {
+    const saved = localStorage.getItem('ws-theme') as 'dark' | 'light' | null;
+    if (saved) setTheme(saved);
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('ws-theme', theme);
+  }, [theme]);
 
   const renderPage = () => {
     switch (page) {
@@ -64,6 +75,27 @@ export default function HomePage() {
             <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
               {new Date().toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' })}
             </span>
+            <button
+              onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
+              title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              style={{
+                background: 'var(--bg-card)',
+                border: '1px solid var(--border-light)',
+                borderRadius: 'var(--radius-md)',
+                color: 'var(--text-secondary)',
+                cursor: 'pointer',
+                fontSize: '0.95rem',
+                width: 32,
+                height: 32,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'background var(--transition), border-color var(--transition)',
+                flexShrink: 0,
+              }}
+            >
+              {theme === 'dark' ? '☀' : '🌙'}
+            </button>
           </div>
         </header>
 

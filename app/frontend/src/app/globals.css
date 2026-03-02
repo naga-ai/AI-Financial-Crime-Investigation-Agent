@@ -1,12 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap');
 
-/* ─── Design Tokens ───────────────────────────────────────────────── */
+/* ─── Design Tokens — Dark (default) ─────────────────────────────── */
 :root {
   --bg-base: #080C10;
   --bg-surface: #0E1520;
   --bg-elevated: #131D2E;
   --bg-card: rgba(255, 255, 255, 0.04);
   --bg-card-hover: rgba(255, 255, 255, 0.07);
+  --bg-glass: rgba(14, 21, 32, 0.72);
+  --bg-topbar: rgba(8, 12, 16, 0.88);
 
   --accent-green: #00D166;
   --accent-green-dim: rgba(0, 209, 102, 0.15);
@@ -20,9 +22,10 @@
   --accent-blue-dim: rgba(68, 138, 255, 0.12);
   --accent-purple: #9C27B0;
 
-  --text-primary: #EDF2F7;
-  --text-secondary: #8899AA;
-  --text-muted: #4A5568;
+  /* Text — readable at all hierarchy levels */
+  --text-primary:    #EDF2F7;
+  --text-secondary:  #A8B8CC;
+  --text-muted:      #7A8899;
 
   --border-subtle: rgba(255, 255, 255, 0.07);
   --border-light: rgba(255, 255, 255, 0.12);
@@ -44,6 +47,29 @@
   --sidebar-w: 260px;
   --header-h: 64px;
   --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Design Tokens — Light ───────────────────────────────────────── */
+[data-theme="light"] {
+  --bg-base:        #F0F4F8;
+  --bg-surface:     #FFFFFF;
+  --bg-elevated:    #E6EDF5;
+  --bg-card:        rgba(0, 0, 0, 0.035);
+  --bg-card-hover:  rgba(0, 0, 0, 0.065);
+  --bg-glass:       rgba(255, 255, 255, 0.82);
+  --bg-topbar:      rgba(240, 244, 248, 0.92);
+
+  --text-primary:   #0A1628;
+  --text-secondary: #3D5066;
+  --text-muted:     #64748B;
+
+  --border-subtle:  rgba(0, 0, 0, 0.07);
+  --border-light:   rgba(0, 0, 0, 0.13);
+
+  --shadow-card:    0 4px 24px rgba(0, 0, 0, 0.08);
+  --shadow-glow-green:  0 0 24px rgba(0, 190, 100, 0.12);
+  --shadow-glow-red:    0 0 24px rgba(220, 50, 50, 0.08);
+  --shadow-glow-amber:  0 0 24px rgba(210, 150, 0, 0.1);
 }
 
 /* ─── Reset ───────────────────────────────────────────────────────── */
@@ -68,6 +94,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  transition: background 0.25s ease, color 0.25s ease;
 }
 
 /* ─── Scrollbar ───────────────────────────────────────────────────── */
@@ -252,6 +279,40 @@ a {
   transition: color var(--transition);
 }
 
+[data-theme="light"] .nav-icon {
+  color: rgba(10, 22, 40, 0.45);
+}
+
+[data-theme="light"] .nav-item:hover .nav-icon {
+  color: rgba(10, 22, 40, 0.85);
+}
+
+[data-theme="light"] .nav-item {
+  color: var(--text-secondary);
+}
+
+[data-theme="light"] .nav-item:hover {
+  background: rgba(0, 0, 0, 0.055);
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .nav-item.active {
+  background: rgba(0, 209, 102, 0.12);
+  color: #009950;
+}
+
+[data-theme="light"] .nav-item.active .nav-icon {
+  color: #009950;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.25);
+}
+
 .sidebar-footer {
   margin-top: auto;
   padding: 16px 12px;
@@ -316,7 +377,7 @@ a {
   align-items: center;
   justify-content: space-between;
   padding: 0 32px;
-  background: rgba(8, 12, 16, 0.85);
+  background: var(--bg-topbar);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   position: sticky;
@@ -351,13 +412,13 @@ a {
 
 /* ─── Glassmorphic Card ───────────────────────────────────────────── */
 .glass-card {
-  background: rgba(14, 21, 32, 0.7);
+  background: var(--bg-glass);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow: var(--shadow-card);
-  transition: border-color var(--transition), box-shadow var(--transition);
+  transition: border-color var(--transition), box-shadow var(--transition), background 0.25s ease;
 }
 
 .glass-card:hover {
