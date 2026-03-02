@@ -161,7 +161,7 @@ export default function DashboardPage() {
     const [stats, setStats] = useState<Stats | null>(null);
     const [loading, setLoading] = useState(false);
     const [running, setRunning] = useState(false);
-    const [limit, setLimit] = useState(315);
+    const [limit, setLimit] = useState(100);
     const [error, setError] = useState<string | null>(null);
 
     const load = useCallback(async () => {
@@ -242,14 +242,15 @@ export default function DashboardPage() {
                             <div style={{ display: 'flex', gap: 14, alignItems: 'flex-end', flexWrap: 'wrap' }}>
                                 <div style={{ flex: 1, minWidth: 200 }}>
                                     <label>Alerts to Process</label>
-                                    <input
-                                        type="number"
+                                    <select
                                         value={limit}
-                                        min={50}
-                                        max={overview?.n_alerts ?? 315}
-                                        step={10}
                                         onChange={e => setLimit(Number(e.target.value))}
-                                    />
+                                        style={{ width: '100%' }}
+                                    >
+                                        {[25, 50, 100, 150, 200, overview?.n_alerts].filter((v): v is number => !!v && v > 0).filter((v, i, arr) => arr.indexOf(v) === i).sort((a, b) => a - b).map(n => (
+                                            <option key={n} value={n}>{n === overview?.n_alerts ? `${n} (all)` : n}</option>
+                                        ))}
+                                    </select>
                                 </div>
                                 <button className="btn btn-primary btn-lg" onClick={handleRun} disabled={running}>
                                     ▶ Run Pipeline
