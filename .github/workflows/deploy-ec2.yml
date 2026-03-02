@@ -86,6 +86,8 @@ jobs:
             git pull
             # Login to GHCR on the EC2 so it can pull the image
             echo "${{ secrets.GITHUB_TOKEN }}" | sudo docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            # Free up disk space before pulling new images
+            sudo docker system prune -af --volumes
             export GITHUB_REPOSITORY_OWNER=${{ github.repository_owner }}
             sudo --preserve-env=GITHUB_REPOSITORY_OWNER docker compose -f app/docker-compose.yml pull
             sudo --preserve-env=GITHUB_REPOSITORY_OWNER docker compose -f app/docker-compose.yml up -d
