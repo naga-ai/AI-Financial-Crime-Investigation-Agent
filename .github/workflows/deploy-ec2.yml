@@ -49,13 +49,25 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       # Build and Push (This is MUCH faster on GitHub than on EC2)
-      - name: Build and push Docker image
+      - name: Build and push API image
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./app
+          file: ./app/Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository }}:latest
-          # This is the "Cache" part - it remembers old layers for next time!
+          tags: ghcr.io/${{ github.repository_owner }}/ai-financial-crime-api:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./app/frontend
+          file: ./app/frontend/Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/ai-financial-crime-frontend:latest
+          build-args: |
+            NEXT_PUBLIC_API_URL=http://${{ secrets.EC2_HOST }}:8000
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -71,5 +83,6 @@ jobs:
             git pull
             # Login to GHCR on the EC2 so it can pull the image
             echo "${{ secrets.GITHUB_TOKEN }}" | sudo docker login ghcr.io -u ${{ github.actor }} --password-stdin
-            sudo docker compose pull # Pull the pre-built image (super fast!)
-            sudo docker compose up -d
+            export GITHUB_REPOSITORY_OWNER=${{ github.repository_owner }}
+            sudo --preserve-env=GITHUB_REPOSITORY_OWNER docker compose pull
+            sudo --preserve-env=GITHUB_REPOSITORY_OWNER docker compose up -d
