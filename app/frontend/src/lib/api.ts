@@ -228,6 +228,7 @@ export interface ModelMetrics {
 
 export interface PulseResult {
     user_id: string;
+    display_name?: string;
     event_type: string;
     processing_time_ms: number;
     cache_hit: boolean;

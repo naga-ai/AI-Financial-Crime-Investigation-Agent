@@ -394,9 +394,11 @@ def cache_stats():
 def process_pulse(max_events: int = 15):
     pulse = get_pulse()
     results = pulse.process_all_events(max_events=max_events)
+    portfolio_map = pulse.portfolio_map
     _session["pulse_results"] = [
         {
             "user_id": r.user_id,
+            "display_name": portfolio_map[r.user_id].display_name if r.user_id in portfolio_map else r.user_id,
             "event_type": r.event.event_type.value,
             "processing_time_ms": r.processing_time_ms,
             "cache_hit": r.cache_hit,
