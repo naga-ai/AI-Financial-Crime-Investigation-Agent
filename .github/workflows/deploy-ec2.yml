@@ -36,7 +36,7 @@ jobs:
   build-and-deploy:
     needs: bump-version
     runs-on: ubuntu-latest
-    timeout-minutes: 20 # <--- FIX 1: Overall job timeout increased
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
 
@@ -51,19 +51,21 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Build and Push (This is MUCH faster on GitHub than on EC2)
+      # Build and Push — registry cache avoids GHA 10 GB cache limit
       - name: Build and push API image
         uses: docker/build-push-action@v5
+        timeout-minutes: 30
         with:
           context: ./app
           file: ./app/Dockerfile
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/ai-financial-crime-api:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/ai-financial-crime-api:cache
+          cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/ai-financial-crime-api:cache,mode=max
 
       - name: Build and push frontend image
         uses: docker/build-push-action@v5
+        timeout-minutes: 15
         with:
           context: ./app/frontend
           file: ./app/frontend/Dockerfile
@@ -71,8 +73,8 @@ jobs:
           tags: ghcr.io/${{ github.repository_owner }}/ai-financial-crime-frontend:latest
           build-args: |
             NEXT_PUBLIC_API_URL=http://${{ secrets.EC2_HOST }}:8000
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/ai-financial-crime-frontend:cache
+          cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/ai-financial-crime-frontend:cache,mode=max
 
       - name: Deploy to EC2 via SSH
         uses: appleboy/ssh-action@v1.0.3
