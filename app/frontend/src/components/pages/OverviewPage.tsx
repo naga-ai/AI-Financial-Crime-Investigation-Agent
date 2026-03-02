@@ -234,7 +234,7 @@ export default function OverviewPage() {
                                     <div style={{ fontSize: '0.72rem', color: 'var(--accent-green)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Compliance Intelligence</div>
                                 </div>
                             </div>
-                            <p className="ov-project-tagline">"AI that investigates so your analysts can decide."</p>
+                            <p className="ov-project-tagline">&ldquo;AI that investigates so your analysts can decide.&rdquo;</p>
                         </div>
                         <span className="badge badge-green">Live</span>
                     </div>
@@ -279,7 +279,7 @@ export default function OverviewPage() {
                                     <div style={{ fontSize: '0.72rem', color: 'var(--accent-teal)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Client Financial Intelligence</div>
                                 </div>
                             </div>
-                            <p className="ov-project-tagline">"AI that turns every financial moment into the right action."</p>
+                            <p className="ov-project-tagline">&ldquo;AI that turns every financial moment into the right action.&rdquo;</p>
                         </div>
                         <span className="badge badge-teal">Built</span>
                     </div>
