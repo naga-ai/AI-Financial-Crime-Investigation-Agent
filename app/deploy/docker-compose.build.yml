@@ -1,0 +1,56 @@
+# Compose file for building images on the host (e.g. EC2). Use from repo root.
+# For CI/deploy that pulls pre-built images, use app/docker-compose.yml instead.
+version: "3.9"
+
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  api:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    image: aml-api:local
+    ports:
+      - "8000:8000"
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - LLM_MODEL=gpt-4o-mini
+      - LLM_TEMPERATURE=0.1
+    env_file:
+      - ./app/.env
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./app/models:/app/models
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/api/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  frontend:
+    build:
+      context: ./app/frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+    image: aml-frontend:local
+    ports:
+      - "3000:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  redis_data:
