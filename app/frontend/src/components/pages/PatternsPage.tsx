@@ -115,12 +115,6 @@ export default function PatternsPage() {
                                 <Tooltip
                                     contentStyle={{ background: '#0E1520', border: '1px solid rgba(255,255,255,0.1)', fontSize: 12, borderRadius: 8 }}
                                     cursor={{ strokeDasharray: '3 3', stroke: 'rgba(255,255,255,0.1)' }}
-                                    formatter={(value: number | undefined, name: string) => {
-                                        const v = value ?? 0;
-                                        if (name === 'Risk Score') return [v, 'Risk'];
-                                        if (name === 'Pipeline ms') return [`${v.toFixed(0)} ms`, 'Latency'];
-                                        return [v, name];
-                                    }}
                                 />
                                 <Legend wrapperStyle={{ fontSize: 11, color: '#8899AA' }} />
                                 {Object.entries(pointsByCluster).map(([cid, pts]) => (
