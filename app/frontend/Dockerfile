@@ -13,6 +13,7 @@ COPY . .
 ARG NEXT_PUBLIC_API_URL=http://api:8000
 ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 
+RUN mkdir -p public
 RUN npm run build
 
 # ── Stage 3: runner ─────────────────────────────────────────────────────
