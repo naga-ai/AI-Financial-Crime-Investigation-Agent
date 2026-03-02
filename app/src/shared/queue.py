@@ -18,6 +18,7 @@ from datetime import datetime
 from typing import Any
 
 from src.config import REDIS_URL
+from src.observability.telemetry import telemetry_bus, EventType
 
 
 class Priority(str, enum.Enum):
@@ -131,6 +132,11 @@ class MemoryQueueBackend:
         else:
             event.status = EventStatus.DLQ
             self._dlq.append(event)
+            telemetry_bus.emit(
+                EventType.QUEUE_DLQ,
+                metadata={"event_id": event.event_id, "event_type": event.event_type, "error": error},
+                component="queue",
+            )
 
     @property
     def health(self) -> QueueHealth:
@@ -251,6 +257,11 @@ class RedisQueueBackend:
                     "error": error,
                     "retry_count": str(event.retry_count),
                 })
+            telemetry_bus.emit(
+                EventType.QUEUE_DLQ,
+                metadata={"event_id": event.event_id, "event_type": event.event_type, "error": error},
+                component="queue",
+            )
 
     @property
     def health(self) -> QueueHealth:
@@ -317,6 +328,12 @@ class EventQueue:
             priority=priority,
         )
         success = self._backend.enqueue(event)
+        if success:
+            telemetry_bus.emit(
+                EventType.QUEUE_ENQUEUE,
+                metadata={"event_type": event_type, "priority": priority.value},
+                component="queue",
+            )
         return event if success else None
 
     def dequeue(self, consumer_group: str = "default") -> QueueEvent | None:

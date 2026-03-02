@@ -8,7 +8,6 @@ when no API key is configured.
 
 from __future__ import annotations
 
-import time
 import uuid
 from datetime import datetime
 from typing import Any
@@ -233,8 +232,6 @@ def generate_str_report(
         use_llm: Whether to use LLM for narrative generation. Falls back to
                  template-based if False or if no API key is configured.
     """
-    start = time.time()
-
     if use_llm and OPENAI_API_KEY:
         try:
             narrative = _generate_with_llm(investigation_state)
@@ -290,5 +287,4 @@ def generate_str_report(
         created_at=datetime.now(),
     )
 
-    elapsed_ms = (time.time() - start) * 1000
     return report

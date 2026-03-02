@@ -25,6 +25,7 @@ from src.shared.queue import event_queue, Priority, EventStatus
 from src.shared.latency import latency_tracker
 from src.cache.manager import cache
 from src.observability.langfuse_setup import trace_store
+from src.observability.telemetry import telemetry_bus, EventType as TelemetryEventType
 
 
 PRIORITY_MAP = {
@@ -132,6 +133,7 @@ class PulseOrchestrator:
         return result
 
     def process_all_events(self, max_events: int | None = None) -> list[PulseProcessingResult]:
+        """Drains the event queue and runs each event through the Pulse LangGraph."""
         events_to_process = self.events[:max_events] if max_events else self.events
         all_results: list[PulseProcessingResult] = []
 
@@ -143,6 +145,11 @@ class PulseOrchestrator:
                 if result:
                     all_results.append(result)
 
+        telemetry_bus.emit(
+            TelemetryEventType.PULSE_COMPLETE,
+            metadata={"events_processed": len(all_results), "max_events": max_events},
+            component="pulse_orchestrator",
+        )
         return all_results
 
     def get_recommendations_by_user(self, user_id: str) -> list[Recommendation]:

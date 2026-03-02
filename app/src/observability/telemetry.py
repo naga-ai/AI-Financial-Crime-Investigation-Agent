@@ -9,23 +9,18 @@ Usage:
     from src.observability.telemetry import telemetry_bus, EventType
 
     telemetry_bus.emit(EventType.PAGE_VIEW, {"page": "Executive Summary"})
-
-    @track_event(EventType.INVESTIGATION_COMPLETE)
-    def my_function(...):
-        ...
 """
 
 from __future__ import annotations
 
 import enum
-import functools
 import time
 import traceback
 import uuid
 from collections import deque
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Any, Callable
+from typing import Any
 
 
 class EventType(str, enum.Enum):
@@ -112,6 +107,7 @@ class TelemetryBus:
         duration_ms: float | None = None,
         error: str | None = None,
     ) -> TelemetryEvent:
+        """Thread-safe ring-buffer ingestion; drops oldest event when buffer is full."""
         event = TelemetryEvent(
             event_id   = str(uuid.uuid4())[:12],
             event_type = event_type,
@@ -190,40 +186,6 @@ class TelemetryBus:
         self._events.clear()
         self._counters.clear()
         self._error_count = 0
-
-
-def track_event(event_type: EventType, component: str = "") -> Callable:
-    """Decorator: emits a telemetry event on function entry and exit.
-
-    On success emits with duration_ms. On exception emits with ERROR
-    severity and re-raises.
-    """
-    def decorator(func: Callable) -> Callable:
-        @functools.wraps(func)
-        def wrapper(*args, **kwargs):
-            start = time.perf_counter()
-            try:
-                result = func(*args, **kwargs)
-                duration_ms = (time.perf_counter() - start) * 1000
-                telemetry_bus.emit(
-                    event_type,
-                    component=component or func.__name__,
-                    duration_ms=duration_ms,
-                )
-                return result
-            except Exception as exc:
-                duration_ms = (time.perf_counter() - start) * 1000
-                telemetry_bus.emit(
-                    EventType.ERROR,
-                    metadata={"function": func.__name__, "error": str(exc)},
-                    component=component or func.__name__,
-                    severity=Severity.ERROR,
-                    duration_ms=duration_ms,
-                    error=str(exc),
-                )
-                raise
-        return wrapper
-    return decorator
 
 
 # Module-level singleton

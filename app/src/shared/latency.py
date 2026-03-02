@@ -8,11 +8,9 @@ and checks them against defined SLA thresholds.
 from __future__ import annotations
 
 import bisect
-import functools
 import random
-import time
 from dataclasses import dataclass, field
-from typing import Any, Callable
+from typing import Any
 
 
 @dataclass
@@ -153,22 +151,6 @@ class LatencyTracker:
 
     def define_sla(self, sla: SLADefinition) -> None:
         self._slas[sla.component] = sla
-
-
-def track_latency(component: str):
-    """Decorator that automatically records function execution time."""
-    def decorator(func: Callable) -> Callable:
-        @functools.wraps(func)
-        def wrapper(*args, **kwargs):
-            start = time.perf_counter()
-            try:
-                result = func(*args, **kwargs)
-                return result
-            finally:
-                duration_ms = (time.perf_counter() - start) * 1000
-                latency_tracker.record(component, duration_ms)
-        return wrapper
-    return decorator
 
 
 latency_tracker = LatencyTracker()

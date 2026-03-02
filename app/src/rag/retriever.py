@@ -19,6 +19,7 @@ import time
 from dataclasses import dataclass, field
 from typing import Any
 
+from src.observability.telemetry import telemetry_bus, EventType
 from src.rag.knowledge_base import FINTRAC_DOCUMENTS, FINANCIAL_GUIDANCE_DOCUMENTS
 
 
@@ -201,13 +202,7 @@ class RegulatoryKnowledgeRAG:
     # ── Public API ──
 
     def retrieve(self, query: str, top_k: int = 3, min_score: float = 0.1) -> RAGContext:
-        """Retrieve relevant regulatory documents for a query.
-
-        Args:
-            query: Natural language query or alert type.
-            top_k: Maximum documents to return.
-            min_score: Minimum relevance score threshold.
-        """
+        """Semantic (ChromaDB) or keyword (TF-IDF) search with cache-aside pattern."""
         if not self._initialized:
             self.initialize()
 
@@ -223,6 +218,14 @@ class RegulatoryKnowledgeRAG:
 
         self._query_count += 1
         self._total_query_ms += elapsed_ms
+
+        backend = "chromadb" if self._use_semantic else "tfidf"
+        telemetry_bus.emit(
+            EventType.RAG_QUERY,
+            metadata={"query": query[:200], "backend": backend, "result_count": len(filtered)},
+            component="rag",
+            duration_ms=elapsed_ms,
+        )
 
         token_est = sum(len(r.content.split()) for r in filtered) * 1.3
 
@@ -285,18 +288,6 @@ class RegulatoryKnowledgeRAG:
             "risk_factors": investigation_state.get("risk_factors", []),
             "summary": summary,
         })
-
-    def find_similar_cases(self, alert_type: str, risk_score: float, top_k: int = 3) -> list[dict]:
-        """Find similar past investigations by alert type and risk proximity."""
-        candidates = []
-        for case in self._case_store:
-            type_match = 1.0 if case["alert_type"] == alert_type else 0.3
-            score_proximity = 1.0 - abs(case["risk_score"] - risk_score) / 100.0
-            similarity = type_match * 0.6 + score_proximity * 0.4
-            candidates.append({**case, "similarity": round(similarity, 3)})
-
-        candidates.sort(key=lambda x: x["similarity"], reverse=True)
-        return candidates[:top_k]
 
     # ── Stats ──
 

@@ -36,6 +36,7 @@ def _record_step(
     result: dict | list,
     start_time: float,
 ) -> None:
+    """Appends one tool execution to the state's step log and opens a trace span."""
     from src.observability.langfuse_setup import trace_store, TraceSpan, estimate_cost
 
     duration_ms = round((time.time() - start_time) * 1000, 2)
@@ -317,7 +318,7 @@ def assess_risk(state: InvestigationState) -> InvestigationState:
 # ---------------------------------------------------------------------------
 
 def should_analyze_crypto(state: InvestigationState) -> str:
-    """Route to deep crypto analysis if the client has crypto accounts."""
+    """Router deciding whether to invoke the deep crypto branch."""
     if state.get("has_crypto", False):
         return "deep_crypto_analysis"
     return "assess_risk"

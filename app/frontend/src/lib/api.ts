@@ -46,17 +46,12 @@ export const discoverPatterns = (method: string, n_clusters: number) =>
         body: JSON.stringify({ method, n_clusters }),
     });
 
-export const getPatterns = () => api<PatternResult>('/api/patterns/results');
-
 // ─── Observability ─────────────────────────────────────────────────
 export const getObsStats = () => api<ObsStats>('/api/observability/stats');
 export const getObsTraces = (limit = 50) => api<{ traces: Trace[] }>(`/api/observability/traces?limit=${limit}`);
 
 // ─── Model ─────────────────────────────────────────────────────────
 export const getModelMetrics = () => api<ModelMetrics>('/api/model/metrics');
-
-// ─── Cache ─────────────────────────────────────────────────────────
-export const getCacheStats = () => api<CacheStats>('/api/cache/stats');
 
 // ─── Pulse ─────────────────────────────────────────────────────────
 export const processPulse = (maxEvents: number) =>
@@ -215,13 +210,6 @@ export interface ModelMetrics {
         f1: { mean: number; std: number };
     };
     top_features: [string, number][];
-}
-
-export interface CacheStats {
-    backend_type: string;
-    total_requests: number;
-    total_hits: number;
-    overall_hit_rate: number;
 }
 
 export interface PulseResult {

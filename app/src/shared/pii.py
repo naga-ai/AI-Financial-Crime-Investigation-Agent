@@ -95,6 +95,7 @@ class PIIMasker:
         purpose: str = "pipeline",
         component: str = "unknown",
     ) -> str:
+        """Deterministic HMAC-SHA256 token — same input always maps to same token."""
         if not value:
             return value
 

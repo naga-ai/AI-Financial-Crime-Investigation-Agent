@@ -8,7 +8,6 @@ In production, these would connect to internal APIs and databases.
 from __future__ import annotations
 
 import json
-import random
 from collections import Counter, defaultdict
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -180,7 +179,6 @@ def get_transaction_history(client_id: str, days: int = 90) -> list[dict[str, An
     """
     _ensure_loaded()
     txns = _client_txns.get(client_id, [])
-    cutoff = datetime.now() - timedelta(days=days * 10)  # scale for simulated dates
     recent = [t for t in txns]  # return all for prototype
 
     return [
@@ -428,11 +426,7 @@ def get_entity_relationships(client_id: str) -> dict[str, Any]:
 
 
 def match_typology(client_id: str, alert_type: str) -> list[dict[str, Any]]:
-    """Compare transaction patterns against known ML/TF typologies.
-
-    Cross-references the alert's characteristics with FINTRAC-documented
-    money laundering indicators and known patterns.
-    """
+    """Scores alert against 7 FINTRAC-aligned money laundering typologies."""
     _ensure_loaded()
     txns = _client_txns.get(client_id, [])
     matches = []
@@ -548,11 +542,7 @@ def get_crypto_flow(client_id: str) -> dict[str, Any]:
 
 
 def get_behavioral_baseline(client_id: str) -> dict[str, Any]:
-    """Compute the client's 90-day behavioral baseline for deviation analysis.
-
-    Establishes what 'normal' looks like for this client, so deviations
-    in the triggered transactions can be quantified.
-    """
+    """Computes 90-day statistical baseline for velocity anomaly detection."""
     _ensure_loaded()
 
     cache_key = cache.make_key("behavioral", client_id)

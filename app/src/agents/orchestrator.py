@@ -24,6 +24,7 @@ from src.config import DATA_DIR
 from src.data.models import AMLAlert, AlertStatus, STRReport
 from src.observability.langfuse_setup import trace_store, TraceSpan
 from src.observability.telemetry import telemetry_bus, EventType, Severity
+from src.shared.latency import latency_tracker
 
 
 @dataclass
@@ -39,34 +40,6 @@ class PipelineResult:
     status: str = "pending"
     timestamp: str = ""
 
-    def summary(self) -> dict[str, Any]:
-        result: dict[str, Any] = {
-            "alert_id": self.alert_id,
-            "client_id": self.client_id,
-            "alert_type": self.alert_type,
-            "status": self.status,
-            "pipeline_time_ms": round(self.total_pipeline_time_ms, 1),
-        }
-        if self.triage:
-            result["triage"] = {
-                "priority": self.triage.priority,
-                "confidence": round(self.triage.confidence, 3),
-                "should_investigate": self.triage.should_investigate,
-                "risk_factors": self.triage.risk_factors,
-                "classification_time_ms": round(self.triage.classification_time_ms, 1),
-                "cache_hit": self.triage.cache_hit,
-            }
-        if self.investigation:
-            result["investigation"] = {
-                "risk_score": self.investigation.get("risk_score", 0),
-                "risk_level": self.investigation.get("risk_level", "unknown"),
-                "confidence": self.investigation.get("confidence", 0),
-                "recommended_action": self.investigation.get("recommended_action", "unknown"),
-                "risk_factors": self.investigation.get("risk_factors", []),
-                "steps_count": len(self.investigation.get("steps_taken", [])),
-            }
-        return result
-
 
 class InvestigationPipeline:
     """Orchestrates the full AML investigation pipeline."""
@@ -80,7 +53,7 @@ class InvestigationPipeline:
         self.results: list[PipelineResult] = []
 
     def process_alert(self, alert: AMLAlert) -> PipelineResult:
-        """Process a single alert through the full pipeline."""
+        """Full AML pipeline: triage → conditional investigation → report → cache."""
         start = time.time()
         result = PipelineResult(
             alert_id=alert.alert_id,
@@ -95,6 +68,7 @@ class InvestigationPipeline:
         )
         result.triage = triage_result
 
+        latency_tracker.record("triage", triage_result.classification_time_ms)
         telemetry_bus.emit(
             EventType.ALERT_TRIAGED,
             metadata={
@@ -130,6 +104,7 @@ class InvestigationPipeline:
             severity_score=alert.severity_score,
         )
         inv_ms = (time.time() - inv_start) * 1000
+        latency_tracker.record("investigation", inv_ms)
         result.investigation = investigation_state
 
         action = investigation_state.get("recommended_action", "close")
@@ -159,6 +134,8 @@ class InvestigationPipeline:
             rpt_start = time.time()
             report = generate_str_report(investigation_state, use_llm=False)
             result.report = report
+            rpt_ms = (time.time() - rpt_start) * 1000
+            latency_tracker.record("report_generation", rpt_ms)
             telemetry_bus.emit(
                 EventType.REPORT_GENERATED,
                 metadata={
@@ -167,15 +144,20 @@ class InvestigationPipeline:
                     "status": result.status,
                 },
                 component="report_generator",
-                duration_ms=(time.time() - rpt_start) * 1000,
+                duration_ms=rpt_ms,
             )
 
         # Step 4: Index completed case in RAG for future precedent retrieval
         try:
             from src.rag.retriever import get_rag_engine
             get_rag_engine().index_completed_case(investigation_state)
-        except Exception:
-            pass
+        except Exception as e:
+            telemetry_bus.emit(
+                EventType.ERROR,
+                metadata={"alert_id": alert.alert_id, "error": str(e), "context": "rag_index_case"},
+                component="pipeline",
+                severity=Severity.WARNING,
+            )
 
         result.total_pipeline_time_ms = (time.time() - start) * 1000
         self.results.append(result)

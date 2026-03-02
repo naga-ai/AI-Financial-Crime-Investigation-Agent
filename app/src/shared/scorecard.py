@@ -291,7 +291,7 @@ def build_triage_scorecard() -> ModelScorecard:
             "Model must not create systematic bias against any demographic group",
         ],
         hyperparameters={
-            "max_depth": 6,
+            "max_depth": 5,
             "learning_rate": 0.1,
             "n_estimators": 200,
             "min_child_weight": 3,
@@ -305,7 +305,7 @@ def build_triage_scorecard() -> ModelScorecard:
             "false positive rate. Features engineered from transaction patterns, "
             "client profiles, and alert metadata."
         ),
-        feature_count=15,
+        feature_count=28,
     )
 
     card.add_threshold(

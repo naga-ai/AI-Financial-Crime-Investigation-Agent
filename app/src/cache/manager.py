@@ -170,6 +170,7 @@ class CacheRegion:
         return f"{self.name}:{key}"
 
     def get(self, key: str) -> Any | None:
+        """Checks memory/Redis for key; emits HIT or MISS telemetry on every call."""
         t0 = time.time()
         value, hit = self._backend.get(self._region_key(key))
         elapsed_ms = (time.time() - t0) * 1000

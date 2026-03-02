@@ -7,6 +7,7 @@ feed back into the triage classifier and investigation agent.
 
 from __future__ import annotations
 
+import time
 from typing import Any
 
 import numpy as np
@@ -18,6 +19,7 @@ from src.agents.pattern_discovery.feature_extraction import (
     CLUSTER_FEATURE_NAMES,
     build_clustering_dataset,
 )
+from src.observability.telemetry import telemetry_bus, EventType
 
 
 def discover_patterns(
@@ -40,6 +42,13 @@ def discover_patterns(
     if len(investigations) < 5:
         return {"error": "Need at least 5 investigations for pattern discovery"}
 
+    start = time.perf_counter()
+    telemetry_bus.emit(
+        EventType.PIPELINE_START,
+        metadata={"component": "pattern_discovery", "n_investigations": len(investigations)},
+        component="pattern_discovery",
+    )
+
     df = build_clustering_dataset(investigations)
     X = df[CLUSTER_FEATURE_NAMES].values
 
@@ -57,10 +66,18 @@ def discover_patterns(
     df["cluster"] = labels
 
     clusters = _analyze_clusters(df, labels, CLUSTER_FEATURE_NAMES)
+    n_clusters_found = len(set(labels) - {-1})
+    duration_ms = (time.perf_counter() - start) * 1000
+    telemetry_bus.emit(
+        EventType.PIPELINE_COMPLETE,
+        metadata={"component": "pattern_discovery", "n_clusters": n_clusters_found},
+        component="pattern_discovery",
+        duration_ms=duration_ms,
+    )
 
     return {
         "method": method,
-        "n_clusters": len(set(labels) - {-1}),
+        "n_clusters": n_clusters_found,
         "noise_points": int(sum(1 for l in labels if l == -1)),
         "total_investigations": len(investigations),
         "clusters": clusters,

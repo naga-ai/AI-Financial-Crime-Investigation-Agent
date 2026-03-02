@@ -9,6 +9,7 @@ Next.js frontend.
 from __future__ import annotations
 
 import sys
+from contextlib import asynccontextmanager
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
@@ -20,6 +21,17 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+from src.observability.telemetry import telemetry_bus, EventType
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Startup: init Langfuse if configured. Shutdown: no-op."""
+    from src.observability.langfuse_setup import init_langfuse
+    init_langfuse()
+    yield
+
+
 # ---------------------------------------------------------------------------
 # App setup
 # ---------------------------------------------------------------------------
@@ -27,6 +39,7 @@ app = FastAPI(
     title="WS Intelligence Platform API",
     description="AI-Native AML & Client Intelligence for Wealthsimple",
     version="0.1.0",
+    lifespan=lifespan,
 )
 
 app.add_middleware(
@@ -294,6 +307,11 @@ def make_decision(alert_id: str, req: DecisionRequest):
     if req.decision.upper() not in valid:
         raise HTTPException(status_code=400, detail=f"Decision must be one of {valid}")
     _session["decisions"][alert_id] = req.decision.upper()
+    telemetry_bus.emit(
+        EventType.HUMAN_DECISION,
+        metadata={"alert_id": alert_id, "decision": req.decision.upper()},
+        component="api",
+    )
     return {"alert_id": alert_id, "decision": req.decision.upper()}
 
 

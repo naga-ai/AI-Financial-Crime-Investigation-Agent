@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import type { Page } from '@/app/page';
+import { getHealth } from '@/lib/api';
 
 const NAV = [
     {
@@ -43,8 +44,8 @@ export default function Sidebar({ active, onNavigate }: Props) {
     const [apiOk, setApiOk] = useState<boolean | null>(null);
 
     useEffect(() => {
-        fetch((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000') + '/api/health')
-            .then(r => setApiOk(r.ok))
+        getHealth()
+            .then(() => setApiOk(true))
             .catch(() => setApiOk(false));
     }, []);
 
