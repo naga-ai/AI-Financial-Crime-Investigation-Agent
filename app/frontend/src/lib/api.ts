@@ -6,18 +6,28 @@
 // Internal Docker service hostnames — not resolvable from a browser
 const DOCKER_INTERNAL = new Set(['api', 'backend', 'server']);
 
+function isPrivateIP(hostname: string): boolean {
+  // Check for internal/private IP ranges
+  if (hostname.startsWith('127.') || hostname.startsWith('10.') || hostname.startsWith('192.168.')) return true;
+  if (hostname.startsWith('172.')) {
+    const second = parseInt(hostname.split('.')[1], 10);
+    if (second >= 16 && second <= 31) return true; // 172.16.0.0/12
+  }
+  return false;
+}
+
 export function getApiBase(): string {
   // In the browser: always derive the API host from the current page host.
   // This makes the app portable across any deployment (EC2, localhost, etc.)
   // without needing the correct URL baked in at build time.
   if (typeof window !== 'undefined') {
     const { protocol, hostname } = window.location;
-    // Override only if env var points to a real public host
+    // Override only if env var points to a real public host (not Docker internal, not localhost, not private IP)
     const raw = process.env.NEXT_PUBLIC_API_URL || '';
     try {
       if (raw) {
         const u = new URL(raw);
-        if (u.hostname && !DOCKER_INTERNAL.has(u.hostname) && u.hostname !== 'localhost' && !u.hostname.startsWith('127.')) {
+        if (u.hostname && !DOCKER_INTERNAL.has(u.hostname) && u.hostname !== 'localhost' && !isPrivateIP(u.hostname)) {
           return raw;
         }
       }
