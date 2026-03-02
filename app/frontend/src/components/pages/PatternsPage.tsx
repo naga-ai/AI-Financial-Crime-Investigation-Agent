@@ -1,13 +1,22 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { getResults, discoverPatterns, type Cluster } from '@/lib/api';
-import { ScatterChart, Scatter, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { getResults, discoverPatterns, type Cluster, type AlertResult } from '@/lib/api';
+import { ScatterChart, Scatter, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, Legend } from 'recharts';
 
 const PALETTE = ['#00D166', '#00BCD4', '#FFC107', '#FF5252', '#448AFF', '#9C27B0'];
 
+interface ScatterPoint {
+    x: number;
+    y: number;
+    cluster: number;
+    alertId: string;
+    riskLevel: string;
+}
+
 export default function PatternsPage() {
     const [clusters, setClusters] = useState<Cluster[]>([]);
+    const [scatterPoints, setScatterPoints] = useState<ScatterPoint[]>([]);
     const [summary, setSummary] = useState<{ n_clusters: number; total: number; noise: number } | null>(null);
     const [method, setMethod] = useState('kmeans');
     const [n, setN] = useState(5);
@@ -18,20 +27,37 @@ export default function PatternsPage() {
         setRunning(true);
         setError(null);
         try {
-            // First confirm we have investigations
             const results = await getResults();
-            const invCount = results.results.filter(r => r.investigation).length;
-            if (invCount < 5) throw new Error(`Need at least 5 investigations (have ${invCount}). Run the pipeline first.`);
+            const investigated = results.results.filter(r => r.investigation);
+            if (investigated.length < 5) throw new Error(`Need at least 5 investigations (have ${investigated.length}). Run the pipeline first.`);
 
             const result = await discoverPatterns(method, n);
             setClusters(result.clusters);
             setSummary({ n_clusters: result.n_clusters, total: result.total_investigations, noise: result.noise_points });
+
+            const assignments = result.cluster_assignments || {};
+            const points: ScatterPoint[] = [];
+            for (const r of investigated) {
+                const inv = r.investigation!;
+                const cid = assignments[r.alert_id] ?? -1;
+                if (cid === -1) continue;
+                points.push({
+                    x: inv.risk_score,
+                    y: r.total_pipeline_time_ms,
+                    cluster: cid,
+                    alertId: r.alert_id,
+                    riskLevel: inv.risk_level,
+                });
+            }
+            setScatterPoints(points);
         } catch (e) { setError(String(e)); }
         finally { setRunning(false); }
     }, [method, n]);
 
-    // Simple scatter data from cluster centroids
-    const scatterData = clusters.flatMap(c => ([{ x: c.avg_risk_score, y: c.size, cluster: c.cluster_id, label: `Cluster ${c.cluster_id}` }]));
+    const pointsByCluster: Record<number, ScatterPoint[]> = {};
+    for (const pt of scatterPoints) {
+        (pointsByCluster[pt.cluster] ??= []).push(pt);
+    }
 
     return (
         <div>
@@ -76,17 +102,31 @@ export default function PatternsPage() {
 
                     <hr className="section-divider" />
 
-                    {/* Scatter: Risk vs Size */}
+                    {/* Scatter: every investigation point, coloured by cluster */}
                     <div className="glass-card animate-fade-in-up" style={{ padding: '20px 24px', marginBottom: 24, animationDelay: '0.15s' }}>
-                        <div className="section-header"><span className="section-title">Risk Score vs Cluster Size</span></div>
-                        <ResponsiveContainer width="100%" height={200}>
-                            <ScatterChart margin={{ left: 10, right: 20, top: 10, bottom: 10 }}>
-                                <XAxis dataKey="x" name="Avg Risk Score" tick={{ fill: '#8899AA', fontSize: 11 }} label={{ value: 'Avg Risk Score', position: 'insideBottom', offset: -4, fill: '#4A5568', fontSize: 11 }} />
-                                <YAxis dataKey="y" name="Cluster Size" tick={{ fill: '#8899AA', fontSize: 11 }} label={{ value: 'Size', angle: -90, position: 'insideLeft', fill: '#4A5568', fontSize: 11 }} />
-                                <Tooltip contentStyle={{ background: '#0E1520', border: '1px solid rgba(255,255,255,0.1)', fontSize: 12, borderRadius: 8 }} cursor={{ strokeDasharray: '3 3', stroke: 'rgba(255,255,255,0.1)' }} />
-                                <Scatter data={scatterData} name="Clusters">
-                                    {scatterData.map((_, i) => <Cell key={i} fill={PALETTE[i % PALETTE.length]} />)}
-                                </Scatter>
+                        <div className="section-header">
+                            <span className="section-title">Investigations by Risk Score &amp; Pipeline Latency</span>
+                            <span className="badge badge-gray">{scatterPoints.length} data points</span>
+                        </div>
+                        <ResponsiveContainer width="100%" height={320}>
+                            <ScatterChart margin={{ left: 10, right: 20, top: 10, bottom: 20 }}>
+                                <XAxis dataKey="x" name="Risk Score" type="number" domain={[0, 100]} tick={{ fill: '#8899AA', fontSize: 11 }} label={{ value: 'Risk Score', position: 'insideBottom', offset: -8, fill: '#4A5568', fontSize: 11 }} />
+                                <YAxis dataKey="y" name="Pipeline ms" type="number" tick={{ fill: '#8899AA', fontSize: 11 }} label={{ value: 'Pipeline (ms)', angle: -90, position: 'insideLeft', fill: '#4A5568', fontSize: 11 }} />
+                                <Tooltip
+                                    contentStyle={{ background: '#0E1520', border: '1px solid rgba(255,255,255,0.1)', fontSize: 12, borderRadius: 8 }}
+                                    cursor={{ strokeDasharray: '3 3', stroke: 'rgba(255,255,255,0.1)' }}
+                                    formatter={(value: number, name: string) => {
+                                        if (name === 'Risk Score') return [value, 'Risk'];
+                                        if (name === 'Pipeline ms') return [`${value.toFixed(0)} ms`, 'Latency'];
+                                        return [value, name];
+                                    }}
+                                />
+                                <Legend wrapperStyle={{ fontSize: 11, color: '#8899AA' }} />
+                                {Object.entries(pointsByCluster).map(([cid, pts]) => (
+                                    <Scatter key={cid} name={`Cluster ${cid}`} data={pts} fill={PALETTE[Number(cid) % PALETTE.length]}>
+                                        {pts.map((_, i) => <Cell key={i} fill={PALETTE[Number(cid) % PALETTE.length]} opacity={0.8} />)}
+                                    </Scatter>
+                                ))}
                             </ScatterChart>
                         </ResponsiveContainer>
                     </div>

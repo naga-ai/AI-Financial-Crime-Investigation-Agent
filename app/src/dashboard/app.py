@@ -949,7 +949,7 @@ The triage classifier uses **24 features** grouped into 6 categories:
 
 - Gradient boosted trees on tabular features
 - 24 hand-engineered features
-- 100% precision, 93.7% recall
+- High precision, ~94% recall (5-fold CV)
 - Sub-2ms inference, fully explainable
 - No GPU required
 

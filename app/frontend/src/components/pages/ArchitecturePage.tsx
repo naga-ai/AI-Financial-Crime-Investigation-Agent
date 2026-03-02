@@ -6,10 +6,10 @@ const ICONS: Record<string, string> = {
 
 const CLARITY_NODES = [
   { id: 'alerts', label: 'AML Alerts', sub: '315 alerts · 10 typologies', type: 'input', color: 'blue' },
-  { id: 'triage', label: 'Triage Agent', sub: 'XGBoost · 24 features · <2ms', type: 'ml', color: 'green', detail: '100% precision · stratified K-fold CV' },
+  { id: 'triage', label: 'Triage Agent', sub: 'XGBoost · 24 features · <2ms', type: 'ml', color: 'green', detail: 'High precision · stratified K-fold CV' },
   { id: 'invest', label: 'Investigation Agent', sub: 'LangGraph · 9 tool nodes', type: 'agent', color: 'teal', detail: 'Transaction analysis · Watchlists · Entity graph · Typology matching' },
   { id: 'rag', label: 'RAG Retrieval', sub: 'ChromaDB + sentence-transformers', type: 'infra', color: 'purple', detail: 'FINTRAC regulatory guidance' },
-  { id: 'report', label: 'Report Generator', sub: 'GPT-4o-mini + template fallback', type: 'llm', color: 'amber', detail: 'FINTRAC STR narratives · 100% uptime' },
+  { id: 'report', label: 'Report Generator', sub: 'GPT-4o-mini + template fallback', type: 'llm', color: 'amber', detail: 'FINTRAC STR narratives · graceful degradation' },
   { id: 'human', label: 'Compliance Officer', sub: 'Approve / Reject / Escalate', type: 'human', color: 'amber' },
   { id: 'fintrac', label: 'FINTRAC Filing', sub: 'Regulatory submission', type: 'output', color: 'red' },
 ];
@@ -131,7 +131,7 @@ export default function ArchitecturePage() {
           </div>
           <div>
             <h3 style={{ marginBottom: 2 }}>WS Pulse — Client Intelligence Pipeline</h3>
-            <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Personalised, tax-aware guidance for 3M+ users at $0.002 per event</p>
+            <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Personalised, tax-aware guidance — scalable to the full user base</p>
           </div>
           <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
             <span className="badge badge-green">LangGraph</span>

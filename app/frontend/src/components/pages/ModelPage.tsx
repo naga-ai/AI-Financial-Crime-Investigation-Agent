@@ -54,7 +54,7 @@ export default function ModelPage() {
     const featData = top_features.map(([name, imp]) => ({ Feature: name.replace(/_/g, ' '), Importance: parseFloat(imp.toFixed(4)) }));
 
     const clarityAgents = [
-        { name: 'Triage Agent', desc: 'XGBoost classifier — 24 features, sub-2ms, 100% precision. Auto-closes 80% of false positives.', color: 'green' },
+        { name: 'Triage Agent', desc: 'XGBoost classifier — 24 features, sub-2ms inference. Auto-closes ~80% of false positives.', color: 'green' },
         { name: 'Investigation Agent', desc: 'LangGraph state machine — 9 tool nodes: velocity, watchlist, entity graph, RAG, typology matching.', color: 'teal' },
         { name: 'Report Generator', desc: 'GPT-4o-mini + template fallback — FINTRAC-compliant STR narratives with structured risk indicators.', color: 'amber' },
         { name: 'Pattern Discovery', desc: 'K-Means / DBSCAN clustering — identifies emerging fraud typologies across 10 FINTRAC categories.', color: 'blue' },

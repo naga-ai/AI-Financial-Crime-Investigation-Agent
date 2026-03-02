@@ -1,27 +1,29 @@
-# WS Intelligence Platform -- Written Explanation
+# WS Intelligence Platform — Written Explanation
 
 ## What the human can now do that they couldn't before
 
-A compliance analyst currently spends 45 minutes manually reviewing a single AML alert -- pulling transactions, screening watchlists, matching typologies, drafting a Suspicious Transaction Report. With WS Clarity, that analyst processes an alert in under 20 milliseconds and reviews 10 AI-generated investigation reports in the time it once took to open one. Eighty percent of false positives are auto-closed with documented confidence scores. Analysts approve, reject, or escalate FINTRAC-ready STR reports in one click, with the full reasoning chain already written. Annual compliance cost drops from $2M (20 FTE) to $350K (4 FTE plus platform) -- $1.65M saved per year.
+Today a compliance analyst spends roughly 45 minutes on every AML alert — pulling transaction histories, screening watchlists, matching FINTRAC typologies, and drafting a Suspicious Transaction Report. Most of those alerts are false positives. The analyst knows it within the first two minutes, but the process still demands the full 45.
 
-On the client side, a portfolio specialist who previously advised 50 clients per day now delivers personalized, tax-aware guidance to three million users simultaneously through WS Pulse. Every financial moment -- paycheck, earnings report, market drop, rate decision -- triggers a sub-second recommendation tailored to that user's holdings and tax situation, at $0.002 per event rather than $300 per hour.
+WS Clarity changes that. An XGBoost triage classifier scores incoming alerts in under 2 milliseconds and auto-closes roughly 80% of low-risk false positives with documented confidence. The remaining 20% move into a LangGraph investigation pipeline: nine tool nodes handle transaction analysis, watchlist screening, entity graph construction, typology matching, and RAG retrieval over FINTRAC regulatory guidance. A report generator (GPT-4o-mini with template fallback) drafts STR narratives that analysts review, approve, or reject in a single click. Investigation time drops from 45 minutes to around 5. A team that needed 15 analysts can operate with 6 — saving an estimated $900K per year.
+
+On the client side, WS Pulse turns every financial moment — a paycheck deposit, an earnings surprise, a rate cut — into a personalised, tax-aware recommendation delivered in seconds. An event detector classifies and prioritises incoming triggers. A portfolio analyser evaluates the impact against each user's holdings. A recommendation agent, grounded through RAG in TFSA and RRSP guidance, generates plain-language advice. What previously required a $200/hr financial advisor now costs pennies per event and scales to the full user base.
 
 ## What AI is responsible for
 
-Both systems share a common architecture. For Clarity: an XGBoost classifier (24 features, sub-2ms, 100% precision) scores every alert. A LangGraph state machine investigates using nine tools -- transaction analysis, watchlist screening, entity graphs, RAG over FINTRAC guidance, typology matching. A report generator produces STR narratives via GPT-4o-mini with template fallback for 100% uptime. Pattern discovery uses K-Means and DBSCAN to surface emerging fraud typologies.
+Both systems share a common architecture. On the Clarity side: the XGBoost classifier (24 engineered features, stratified cross-validation) triages every alert. A LangGraph state machine orchestrates the investigation — transaction pattern analysis, sanctions and PEP screening, entity-relationship mapping, FINTRAC typology matching, and semantic search over regulatory guidance. GPT-4o-mini generates STR narratives. K-Means and DBSCAN clustering surfaces emerging fraud patterns that rule-based systems miss entirely.
 
-For Pulse: an event detector classifies six financial event types with priority scoring. A portfolio analyzer computes personalized impact and tax implications. A recommendation agent grounds advice in RAG-retrieved TFSA, RRSP, and investment guidance.
+On the Pulse side: an event detector classifies six financial event types with priority scoring. A portfolio analyser computes personalised impact and tax implications. A recommendation agent grounds advice in RAG-retrieved Canadian regulatory context.
 
-Both pipelines share production infrastructure: PII masking (HMAC-SHA256 tokenization) before any LLM or cache call, Redis event queues with dead-letter queues and backpressure, multi-region semantic caching, per-span observability via Langfuse, and OSFI E-23 model scorecards.
+Both pipelines share production infrastructure: PII masking via HMAC-SHA256 tokenisation before any LLM or cache interaction, Redis Streams for event queuing with dead-letter queues and backpressure, semantic caching with tiered TTLs, full-trace observability through Langfuse, and OSFI E-23 aligned model scorecards.
 
 ## Where AI must stop
 
-The STR filing decision is irreversible -- it triggers a regulatory submission to FINTRAC with potential criminal liability. AI provides a recommendation with confidence, reasoning, and risk indicators. A human compliance officer makes the final call. No report is filed without explicit human approval.
+The STR filing decision carries regulatory consequences — it triggers a submission to FINTRAC. AI provides the recommendation, the reasoning chain, and the risk indicators. A compliance officer makes the final call. No report is filed without human approval.
 
-On the Pulse side, AI never initiates portfolio changes. It proposes. Users approve, adjust, or dismiss. No automated trading.
+On the Pulse side, AI never initiates portfolio changes. It proposes. Users approve, adjust, or dismiss. No automated trading, no irreversible actions.
 
 ## What would break first at scale
 
-At 100,000 alerts per day, LLM investigation cost ($0.0012 per case) stays manageable, but queue saturation becomes the bottleneck -- more parallel workers are needed before Redis memory is a constraint. The semantic cache defers much of this: repeated patterns hit cache instead of the LLM, reducing marginal cost toward zero.
+At 100,000 alerts per day, LLM investigation cost stays manageable (~$0.04 per case), but queue throughput becomes the constraint. More consumer workers are needed before Redis memory pressure is a factor. The semantic cache helps substantially — repeated patterns hit cache and skip the LLM entirely, pushing marginal cost down.
 
-The deeper constraint is the human review queue. AI processes 10,000 cases per minute; a compliance team cannot. The system widens that funnel -- only cases that genuinely need human eyes reach the queue. At ten times current volume, the triage threshold needs tuning and the team grows from four to roughly eight FTE, not forty.
+The harder limit is human review capacity. AI can process thousands of cases per minute; a compliance team cannot. The system addresses this by ensuring only genuinely suspicious cases reach the review queue. At ten times current volume, the triage threshold would need tuning and the team would grow from six to roughly ten, not sixty.

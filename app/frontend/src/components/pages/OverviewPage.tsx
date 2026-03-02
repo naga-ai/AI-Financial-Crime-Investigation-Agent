@@ -5,7 +5,7 @@
 const CLARITY_AGENTS = [
     {
         name: 'Triage Agent',
-        desc: 'XGBoost classifier — 24 features, sub-2ms inference, 100% precision. Auto-closes 80% of false positives.',
+        desc: 'XGBoost classifier — 24 features, sub-2ms inference. Auto-closes ~80% of false positives with high confidence.',
         color: 'green',
     },
     {
@@ -69,14 +69,14 @@ const PILOT_FLOW = [
 const CAPABILITIES = [
     {
         area: 'ML Model',
-        description: 'XGBoost triage classifier — 24 engineered features, cross-validated, OSFI E-23 aligned scorecard with bias analysis.',
+        description: 'XGBoost triage classifier — 24 engineered features, cross-validated, with OSFI E-23 aligned scorecard.',
         technology: 'XGBoost · scikit-learn',
         badge: 'Production',
         badgeColor: 'badge-green',
     },
     {
         area: 'LLM Integration',
-        description: 'GPT-4o-mini for STR narrative generation and portfolio recommendations. Template fallback ensures 100% uptime without API key.',
+        description: 'GPT-4o-mini for STR narrative generation and portfolio recommendations. Template fallback ensures continuity if the LLM is unavailable.',
         technology: 'OpenAI GPT-4o-mini · LangChain',
         badge: 'Production',
         badgeColor: 'badge-green',
@@ -90,7 +90,7 @@ const CAPABILITIES = [
     },
     {
         area: 'Semantic Cache',
-        description: 'Multi-region TTL caching — separate policies for triage (1h), investigation (24h), regulatory context (7d). Near-zero marginal cost at scale.',
+        description: 'TTL caching with separate policies for triage (1h), investigation (24h), regulatory context (7d). Reduces repeated LLM calls significantly.',
         technology: 'Redis 7 · in-memory fallback',
         badge: 'Production',
         badgeColor: 'badge-green',
@@ -140,13 +140,12 @@ const CAPABILITIES = [
 ];
 
 const IMPACT_ROWS = [
-    { metric: 'AML investigation time', before: '45 min / case', after: '17 ms / case', saving: '99.9% faster' },
-    { metric: 'Cost per investigation', before: '$37.50 (analyst hour)', after: '$0.005 (compute)', saving: '99.98% reduction' },
-    { metric: 'False positive auto-close', before: '0% — all manual', after: '80% auto-closed', saving: '80% analyst time freed' },
-    { metric: 'Annual AML team cost', before: '$2M · 20 FTE', after: '$350K · 4 FTE + platform', saving: '$1.65M / year' },
-    { metric: 'Client portfolio insight', before: '$300 / hr advisor', after: '$0.002 / event', saving: 'Democratized to 3M users' },
-    { metric: 'Event response time', before: 'Hours to days', after: 'Sub-second', saving: 'Real-time intelligence' },
-    { metric: 'Support ticket reduction', before: 'Baseline', after: '−30% (proactive AI)', saving: '$500K / year' },
+    { metric: 'AML investigation time', before: '45 min / case', after: '~5 min (AI + review)', saving: '~90% faster' },
+    { metric: 'Cost per investigation', before: '$37.50 (analyst hour)', after: '~$4 (compute + review)', saving: '~89% reduction' },
+    { metric: 'False positive auto-close', before: '0% — all manual', after: '~80% auto-closed', saving: 'Analyst focuses on real risk' },
+    { metric: 'Annual AML team cost', before: '$1.5M · 15 FTE', after: '$600K · 6 FTE + platform', saving: '~$900K / year saved' },
+    { metric: 'Client portfolio insight', before: '$200 / hr advisor', after: '~$0.05 / event', saving: 'Scalable to full user base' },
+    { metric: 'Event response time', before: 'Hours to days', after: 'Seconds', saving: 'Near real-time' },
 ];
 
 const TECH_GROUPS = [
@@ -204,19 +203,17 @@ export default function OverviewPage() {
 
             {/* ── Hero ─────────────────────────────────────────────── */}
             <section className="ov-hero">
-                <div className="ov-hero-eyebrow">Wealthsimple AI Builders Program</div>
                 <h1 className="ov-hero-title">
                     WS <span>Intelligence</span> Platform
                 </h1>
                 <p className="ov-hero-sub">
-                    AI-native intelligence for both sides of the house — automating financial crime investigation
-                    for compliance teams and delivering personalised financial guidance to every Wealthsimple client.
+                    Two AI systems on shared infrastructure — one automates AML compliance investigation,
+                    the other delivers personalised financial guidance to every client.
                 </p>
                 <div className="ov-hero-badges">
                     <span className="badge badge-green">● WS Clarity — Compliance</span>
-                    <span className="badge badge-teal">● WS Pilot — Client AI</span>
+                    <span className="badge badge-teal">● WS Pulse — Client AI</span>
                     <span className="badge badge-blue">Shared Production Infrastructure</span>
-                    <span className="badge badge-gray">10 AI Agents · 2 LangGraph Pipelines</span>
                 </div>
             </section>
 
@@ -241,16 +238,16 @@ export default function OverviewPage() {
 
                     <div className="ov-project-stat-row">
                         <div className="ov-stat">
-                            <div className="ov-stat-val green">80%</div>
+                            <div className="ov-stat-val green">~80%</div>
                             <div className="ov-stat-lbl">False positives auto-closed</div>
                         </div>
                         <div className="ov-stat">
-                            <div className="ov-stat-val teal">17ms</div>
-                            <div className="ov-stat-lbl">Per investigation (was 45 min)</div>
+                            <div className="ov-stat-val teal">~90%</div>
+                            <div className="ov-stat-lbl">Reduction in review time</div>
                         </div>
                         <div className="ov-stat">
-                            <div className="ov-stat-val amber">$1.65M</div>
-                            <div className="ov-stat-lbl">Annual savings vs 20 FTE</div>
+                            <div className="ov-stat-val amber">~$900K</div>
+                            <div className="ov-stat-lbl">Estimated annual savings</div>
                         </div>
                     </div>
 
@@ -286,15 +283,15 @@ export default function OverviewPage() {
 
                     <div className="ov-project-stat-row">
                         <div className="ov-stat">
-                            <div className="ov-stat-val teal">3M+</div>
-                            <div className="ov-stat-lbl">Users served (was ~50)</div>
+                            <div className="ov-stat-val teal">Scalable</div>
+                            <div className="ov-stat-lbl">Handles full user base</div>
                         </div>
                         <div className="ov-stat">
-                            <div className="ov-stat-val blue">$0.002</div>
-                            <div className="ov-stat-lbl">Per event (was $300/hr)</div>
+                            <div className="ov-stat-val blue">~$0.05</div>
+                            <div className="ov-stat-lbl">Per event (vs $200/hr advisor)</div>
                         </div>
                         <div className="ov-stat">
-                            <div className="ov-stat-val green">&lt;1s</div>
+                            <div className="ov-stat-val green">Seconds</div>
                             <div className="ov-stat-lbl">Response time (was hours)</div>
                         </div>
                     </div>
@@ -435,15 +432,15 @@ export default function OverviewPage() {
             <div className="animate-fade-in-up" style={{ animationDelay: '0.15s' }}>
                 <div style={{ marginBottom: 16 }}>
                     <h3 style={{ marginBottom: 4 }}>Cost Savings &amp; Business Impact</h3>
-                    <p style={{ fontSize: '0.78rem' }}>Research-backed projections from a single Wealthsimple-scale deployment</p>
+                    <p style={{ fontSize: '0.78rem' }}>Estimated projections for a mid-size compliance operation</p>
                 </div>
 
                 <div className="ov-impact-kpis">
                     {[
-                        { val: '$1.65M', lbl: 'Annual AML savings', sub: 'vs 20 FTE team', color: 'var(--accent-green)' },
-                        { val: '99.98%', lbl: 'Cost reduction per case', sub: '$37.50 → $0.005', color: 'var(--accent-teal)' },
-                        { val: '80%', lbl: 'Analyst time freed', sub: 'Auto-closed false positives', color: 'var(--accent-amber)' },
-                        { val: '$500K', lbl: 'Support ticket savings', sub: '−30% via proactive AI', color: 'var(--accent-blue)' },
+                        { val: '~$900K', lbl: 'Annual AML savings', sub: 'Reduced from 15 to 6 FTE', color: 'var(--accent-green)' },
+                        { val: '~89%', lbl: 'Cost reduction per case', sub: '$37.50 → ~$4', color: 'var(--accent-teal)' },
+                        { val: '~80%', lbl: 'Analyst time freed', sub: 'Auto-closed false positives', color: 'var(--accent-amber)' },
+                        { val: '~90%', lbl: 'Faster investigation', sub: '45 min → ~5 min', color: 'var(--accent-blue)' },
                     ].map(k => (
                         <div key={k.lbl} className="ov-impact-kpi glass-card">
                             <div className="ov-impact-kpi-val" style={{ color: k.color }}>{k.val}</div>
@@ -483,7 +480,7 @@ export default function OverviewPage() {
             <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
                 <div style={{ marginBottom: 16 }}>
                     <h3 style={{ marginBottom: 4 }}>Technology Stack</h3>
-                    <p style={{ fontSize: '0.78rem' }}>Purpose-selected for production financial systems — no demos, no shortcuts</p>
+                    <p style={{ fontSize: '0.78rem' }}>Purpose-selected for production financial systems</p>
                 </div>
                 <div className="ov-tech-grid">
                     {TECH_GROUPS.map(group => (
@@ -510,7 +507,7 @@ export default function OverviewPage() {
             {/* ── Footer note ───────────────────────────────────────── */}
             <div style={{ textAlign: 'center', padding: '8px 0 16px', borderTop: '1px solid var(--border-subtle)' }}>
                 <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                    Built for the Wealthsimple AI Builders Program · All AI decisions are advisory — humans approve every critical action
+                    All AI decisions are advisory — humans approve every critical action
                 </p>
             </div>
 

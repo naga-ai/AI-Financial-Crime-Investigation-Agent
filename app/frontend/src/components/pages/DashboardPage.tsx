@@ -224,7 +224,7 @@ export default function DashboardPage() {
                     <KpiCard label="Transactions" value={fmt(overview.n_transactions)} color="blue" delay={0.05} />
                     <KpiCard label="AML Alerts" value={fmt(overview.n_alerts)} color="amber" delay={0.1} />
                     <KpiCard label="True Positives" value={fmt(overview.true_positives)} sub="Ground truth" color="red" delay={0.15} />
-                    <KpiCard label="False Positives" value={fmt(overview.false_positives)} sub="80% of total" color="purple" delay={0.2} />
+                    <KpiCard label="False Positives" value={fmt(overview.false_positives)} color="purple" delay={0.2} />
                     <KpiCard label="Status" value={overview.processed ? 'Processed' : 'Ready'} color="green" delay={0.25} />
                 </div>
             )}
@@ -335,9 +335,9 @@ export default function DashboardPage() {
                             <div style={{ display: 'flex', flexDirection: 'column', gap: 14, paddingTop: 8 }}>
                                 {[
                                     { label: 'Hours Saved (batch)', val: `${(stats.auto_closed * 0.75).toFixed(0)}h`, color: 'var(--accent-green)' },
-                                    { label: 'Annual Cost Savings', val: `$${((stats.auto_closed * 0.75 * 55 * 12 * 4) / 1000).toFixed(0)}K`, color: 'var(--accent-teal)' },
-                                    { label: 'Avg Pipeline Cost', val: `~$0.0001/alert`, color: 'var(--accent-amber)' },
-                                    { label: 'vs Manual (6 FTE)', val: `$660K / yr`, color: 'var(--accent-red)' },
+                                    { label: 'Est. Annual Savings', val: `$${((stats.auto_closed * 0.75 * 50 * 12) / 1000).toFixed(0)}K`, color: 'var(--accent-teal)' },
+                                    { label: 'Avg Pipeline Cost', val: `~$0.04 / alert`, color: 'var(--accent-amber)' },
+                                    { label: 'Manual Equivalent', val: `~$${(stats.auto_closed * 0.75 * 50 / 1000).toFixed(0)}K / batch`, color: 'var(--accent-red)' },
                                 ].map(row => (
                                     <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                         <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{row.label}</span>
