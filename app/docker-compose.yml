@@ -13,10 +13,11 @@ services:
       timeout: 3s
       retries: 5
 
-  app:
+  # ── Python FastAPI backend (replaces Streamlit) ──────────────────────
+  api:
     build: .
     ports:
-      - "8501:8501"
+      - "8000:8000"
     environment:
       - REDIS_URL=redis://redis:6379/0
       - LLM_MODEL=gpt-4o-mini
@@ -28,6 +29,26 @@ services:
         condition: service_healthy
     volumes:
       - ./models:/app/models
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Next.js frontend ─────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://api:8000
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://api:8000
+    depends_on:
+      api:
+        condition: service_healthy
 
 volumes:
   redis_data:

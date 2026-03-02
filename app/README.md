@@ -128,6 +128,8 @@ Financial Event (paycheck / earnings / market drop)
 
 | Layer | Technology |
 |-------|-----------|
+| **Frontend Framework** | **Next.js 14** (React, TypeScript) |
+| **API Server** | **FastAPI** + **Uvicorn** |
 | Orchestration | LangGraph |
 | Triage ML | XGBoost |
 | LLM | GPT-4o-mini (optional) |
@@ -135,7 +137,6 @@ Financial Event (paycheck / earnings / market drop)
 | Observability | Langfuse + local store |
 | Caching | Redis 7 + in-memory |
 | Validation | Pydantic v2 |
-| Dashboard | Streamlit + Plotly |
 | Containers | Docker + Compose |
 
 ---
