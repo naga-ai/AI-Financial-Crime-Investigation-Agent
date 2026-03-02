@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { getResults, discoverPatterns, type Cluster, type AlertResult } from '@/lib/api';
+import { getResults, discoverPatterns, type Cluster } from '@/lib/api';
 import { ScatterChart, Scatter, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, Legend } from 'recharts';
 
 const PALETTE = ['#00D166', '#00BCD4', '#FFC107', '#FF5252', '#448AFF', '#9C27B0'];
