@@ -1,21 +1,20 @@
 name: Deploy to EC2
-
 on:
   push:
     branches: [main]
 
+# Necessary for pushing to GitHub Container Registry
+permissions:
+  contents: write
+  packages: write 
+
 jobs:
   bump-version:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     outputs:
       new_version: ${{ steps.bump.outputs.new_version }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Bump version
         id: bump
         run: |
@@ -26,8 +25,6 @@ jobs:
           NEW="${MAJOR}.${NEW_MINOR}"
           echo "$NEW" > app/VERSION
           echo "new_version=$NEW" >> $GITHUB_OUTPUT
-          echo "Bumped $OLD -> $NEW"
-
       - name: Commit version bump
         run: |
           git config user.name "github-actions[bot]"
@@ -36,19 +33,43 @@ jobs:
           git commit -m "chore: bump version to $(cat app/VERSION)" || echo "Nothing to commit"
           git push
 
-  deploy:
+  build-and-deploy:
     needs: bump-version
     runs-on: ubuntu-latest
+    timeout-minutes: 20 # <--- FIX 1: Overall job timeout increased
     steps:
-      - name: Deploy to EC2
+      - uses: actions/checkout@v4
+
+      # Log into GitHub's Container Registry
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Build and Push (This is MUCH faster on GitHub than on EC2)
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository }}:latest
+          # This is the "Cache" part - it remembers old layers for next time!
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Deploy to EC2 via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          command_timeout: 20m # <--- FIX 1: SSH specific timeout fix
           script: |
             cd /opt/aml-dashboard
             git pull
-            cd app
-            sudo docker compose down
-            sudo docker compose up --build -d
+            # Login to GHCR on the EC2 so it can pull the image
+            echo "${{ secrets.GITHUB_TOKEN }}" | sudo docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            sudo docker compose pull # Pull the pre-built image (super fast!)
+            sudo docker compose up -d
