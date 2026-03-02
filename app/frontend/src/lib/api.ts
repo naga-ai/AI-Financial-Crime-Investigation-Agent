@@ -3,7 +3,25 @@
  * All methods call the Python API running on port 8000.
  */
 
-const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+function getApiBase(): string {
+  const raw = process.env.NEXT_PUBLIC_API_URL || '';
+  // Valid URL must have a host (reject "http://:8000" or malformed)
+  try {
+    if (raw) {
+      const u = new URL(raw.startsWith('http') ? raw : `http://${raw}`);
+      if (u.hostname && u.hostname.length > 0) return raw.startsWith('http') ? raw : `http://${raw}`;
+    }
+  } catch {
+    /* invalid */
+  }
+  // Fallback: same host as frontend, port 8000 (works for EC2 when build env was wrong)
+  if (typeof window !== 'undefined') {
+    return `${window.location.protocol}//${window.location.hostname}:8000`;
+  }
+  return 'http://localhost:8000';
+}
+
+const BASE = getApiBase();
 
 async function api<T>(path: string, options?: RequestInit): Promise<T> {
     const res = await fetch(`${BASE}${path}`, {
