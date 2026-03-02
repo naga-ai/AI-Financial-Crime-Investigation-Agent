@@ -13,6 +13,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 from sklearn.cluster import KMeans, DBSCAN
+from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
 from src.agents.pattern_discovery.feature_extraction import (
@@ -55,6 +56,11 @@ def discover_patterns(
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
 
+    # 2D PCA for scatter plot — spreads points by cluster structure
+    n_components = min(2, X_scaled.shape[0], X_scaled.shape[1])
+    pca = PCA(n_components=n_components, random_state=42)
+    X_2d = pca.fit_transform(X_scaled)
+
     if method == "dbscan":
         model = DBSCAN(eps=1.5, min_samples=min_samples)
         labels = model.fit_predict(X_scaled)
@@ -75,6 +81,14 @@ def discover_patterns(
         duration_ms=duration_ms,
     )
 
+    # 2D coordinates for scatter plot — points distributed by cluster structure
+    point_coordinates = {}
+    for idx in range(len(df)):
+        alert_id = df.iloc[idx]["alert_id"]
+        pc1 = round(float(X_2d[idx, 0]), 4)
+        pc2 = round(float(X_2d[idx, 1]), 4) if n_components > 1 else 0.0
+        point_coordinates[alert_id] = [pc1, pc2]
+
     return {
         "method": method,
         "n_clusters": n_clusters_found,
@@ -85,6 +99,7 @@ def discover_patterns(
             row["alert_id"]: int(row["cluster"])
             for _, row in df.iterrows()
         },
+        "point_coordinates": point_coordinates,
     }
 
 

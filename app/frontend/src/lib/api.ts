@@ -75,10 +75,10 @@ export const makeDecision = (alertId: string, decision: string) =>
     });
 
 // ─── Patterns ──────────────────────────────────────────────────────
-export const discoverPatterns = (method: string, n_clusters: number) =>
+export const discoverPatterns = () =>
     api<PatternResult>('/api/patterns/discover', {
         method: 'POST',
-        body: JSON.stringify({ method, n_clusters }),
+        body: JSON.stringify({ method: 'kmeans', n_clusters: 5 }),
     });
 
 // ─── Observability ─────────────────────────────────────────────────
@@ -212,6 +212,7 @@ export interface PatternResult {
     noise_points: number;
     clusters: Cluster[];
     cluster_assignments: Record<string, number>;
+    point_coordinates?: Record<string, [number, number]>;
 }
 
 export interface ObsStats {

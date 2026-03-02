@@ -18,8 +18,6 @@ export default function PatternsPage() {
     const [clusters, setClusters] = useState<Cluster[]>([]);
     const [scatterPoints, setScatterPoints] = useState<ScatterPoint[]>([]);
     const [summary, setSummary] = useState<{ n_clusters: number; total: number; noise: number } | null>(null);
-    const [method, setMethod] = useState('kmeans');
-    const [n, setN] = useState(5);
     const [running, setRunning] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -31,19 +29,25 @@ export default function PatternsPage() {
             const investigated = results.results.filter(r => r.investigation);
             if (investigated.length < 5) throw new Error(`Need at least 5 investigations (have ${investigated.length}). Run the pipeline first.`);
 
-            const result = await discoverPatterns(method, n);
+            const result = await discoverPatterns();
             setClusters(result.clusters);
             setSummary({ n_clusters: result.n_clusters, total: result.total_investigations, noise: result.noise_points });
 
             const assignments = result.cluster_assignments || {};
+            const coords = result.point_coordinates || {};
             const points: ScatterPoint[] = [];
+
             for (const r of investigated) {
                 const inv = r.investigation!;
                 const cid = assignments[r.alert_id] ?? -1;
                 if (cid === -1) continue;
+
+                const xy = coords[r.alert_id];
+                const pc1 = xy?.[0] ?? inv.risk_score;
+                const pc2 = xy?.[1] ?? r.total_pipeline_time_ms;
                 points.push({
-                    x: inv.risk_score,
-                    y: r.total_pipeline_time_ms,
+                    x: pc1,
+                    y: pc2,
                     cluster: cid,
                     alertId: r.alert_id,
                     riskLevel: inv.risk_level,
@@ -52,7 +56,7 @@ export default function PatternsPage() {
             setScatterPoints(points);
         } catch (e) { setError(String(e)); }
         finally { setRunning(false); }
-    }, [method, n]);
+    }, []);
 
     const pointsByCluster: Record<number, ScatterPoint[]> = {};
     for (const pt of scatterPoints) {
@@ -63,21 +67,8 @@ export default function PatternsPage() {
         <div>
             <div className="glass-card animate-fade-in-up" style={{ padding: '24px 28px', marginBottom: 24 }}>
                 <h3 style={{ marginBottom: 6 }}>Unsupervised Fraud Pattern Discovery</h3>
-                <p style={{ marginBottom: 20, fontSize: '0.85rem' }}>Run K-Means or DBSCAN clustering on completed investigations to reveal emerging typologies not captured by existing rule-based detection.</p>
+                <p style={{ marginBottom: 20, fontSize: '0.85rem' }}>Cluster all investigations to reveal emerging typologies not captured by rule-based detection. Each point is an investigation; color shows its cluster.</p>
                 <div style={{ display: 'flex', gap: 16, alignItems: 'flex-end', flexWrap: 'wrap' }}>
-                    <div style={{ minWidth: 140 }}>
-                        <label>Algorithm</label>
-                        <select value={method} onChange={e => setMethod(e.target.value)}>
-                            <option value="kmeans">K-Means</option>
-                            <option value="dbscan">DBSCAN</option>
-                        </select>
-                    </div>
-                    {method === 'kmeans' && (
-                        <div style={{ minWidth: 140 }}>
-                            <label>Clusters (k)</label>
-                            <input type="number" value={n} min={2} max={8} onChange={e => setN(Number(e.target.value))} />
-                        </div>
-                    )}
                     <button className="btn btn-primary" onClick={run} disabled={running}>
                         {running ? <><span className="spinner" style={{ width: 14, height: 14 }} /> Discovering…</> : '⌬ Run Clustering'}
                     </button>
@@ -102,16 +93,16 @@ export default function PatternsPage() {
 
                     <hr className="section-divider" />
 
-                    {/* Scatter: every investigation point, coloured by cluster */}
                     <div className="glass-card animate-fade-in-up" style={{ padding: '20px 24px', marginBottom: 24, animationDelay: '0.15s' }}>
                         <div className="section-header">
-                            <span className="section-title">Investigations by Risk Score &amp; Pipeline Latency</span>
-                            <span className="badge badge-gray">{scatterPoints.length} data points</span>
+                            <span className="section-title">Investigations by Cluster (2D Projection)</span>
+                            <span className="badge badge-gray">{scatterPoints.length} points</span>
                         </div>
-                        <ResponsiveContainer width="100%" height={320}>
-                            <ScatterChart margin={{ left: 10, right: 20, top: 10, bottom: 20 }}>
-                                <XAxis dataKey="x" name="Risk Score" type="number" domain={[0, 100]} tick={{ fill: '#8899AA', fontSize: 11 }} label={{ value: 'Risk Score', position: 'insideBottom', offset: -8, fill: '#4A5568', fontSize: 11 }} />
-                                <YAxis dataKey="y" name="Pipeline ms" type="number" tick={{ fill: '#8899AA', fontSize: 11 }} label={{ value: 'Pipeline (ms)', angle: -90, position: 'insideLeft', fill: '#4A5568', fontSize: 11 }} />
+                        <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: 16 }}>Each dot is an investigation. PCA projects multi-dimensional features onto 2D — clusters appear as distinct groups.</p>
+                        <ResponsiveContainer width="100%" height={380}>
+                            <ScatterChart margin={{ left: 16, right: 24, top: 16, bottom: 24 }}>
+                                <XAxis dataKey="x" name="Component 1" type="number" tick={{ fill: '#8899AA', fontSize: 11 }} label={{ value: 'Component 1', position: 'insideBottom', offset: -12, fill: '#4A5568', fontSize: 11 }} />
+                                <YAxis dataKey="y" name="Component 2" type="number" tick={{ fill: '#8899AA', fontSize: 11 }} label={{ value: 'Component 2', angle: -90, position: 'insideLeft', offset: 8, fill: '#4A5568', fontSize: 11 }} />
                                 <Tooltip
                                     contentStyle={{ background: '#0E1520', border: '1px solid rgba(255,255,255,0.1)', fontSize: 12, borderRadius: 8 }}
                                     cursor={{ strokeDasharray: '3 3', stroke: 'rgba(255,255,255,0.1)' }}
@@ -119,14 +110,13 @@ export default function PatternsPage() {
                                 <Legend wrapperStyle={{ fontSize: 11, color: '#8899AA' }} />
                                 {Object.entries(pointsByCluster).map(([cid, pts]) => (
                                     <Scatter key={cid} name={`Cluster ${cid}`} data={pts} fill={PALETTE[Number(cid) % PALETTE.length]}>
-                                        {pts.map((_, i) => <Cell key={i} fill={PALETTE[Number(cid) % PALETTE.length]} opacity={0.8} />)}
+                                        {pts.map((_, i) => <Cell key={i} fill={PALETTE[Number(cid) % PALETTE.length]} opacity={0.85} />)}
                                     </Scatter>
                                 ))}
                             </ScatterChart>
                         </ResponsiveContainer>
                     </div>
 
-                    {/* Cluster cards */}
                     <div className="section-header"><span className="section-title">Cluster Profiles</span></div>
                     <div className="grid-2 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
                         {clusters.sort((a, b) => b.avg_risk_score - a.avg_risk_score).map(c => (
