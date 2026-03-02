@@ -52,6 +52,8 @@ export const getObsTraces = (limit = 50) => api<{ traces: Trace[] }>(`/api/obser
 
 // ─── Model ─────────────────────────────────────────────────────────
 export const getModelMetrics = () => api<ModelMetrics>('/api/model/metrics');
+export const trainModel = () =>
+    api<ModelMetrics>('/api/model/train', { method: 'POST' });
 
 // ─── Pulse ─────────────────────────────────────────────────────────
 export const processPulse = (maxEvents: number) =>
@@ -203,6 +205,13 @@ export interface SpanData {
     status: string;
 }
 
+export interface FoldDetail {
+    fold: number;
+    precision: number;
+    recall: number;
+    f1: number;
+}
+
 export interface ModelMetrics {
     cv_metrics: {
         precision: { mean: number; std: number };
@@ -210,6 +219,11 @@ export interface ModelMetrics {
         f1: { mean: number; std: number };
     };
     top_features: [string, number][];
+    fold_details?: FoldDetail[];
+    training_samples?: number;
+    true_positives?: number;
+    false_positives?: number;
+    training_time_ms?: number;
 }
 
 export interface PulseResult {

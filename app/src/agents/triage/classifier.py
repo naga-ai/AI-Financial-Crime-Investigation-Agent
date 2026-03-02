@@ -48,14 +48,19 @@ def train_triage_model(save: bool = True) -> tuple[XGBClassifier, dict]:
     """Train the triage classifier on generated alert data.
 
     Uses stratified k-fold cross-validation to evaluate, then trains
-    a final model on all data. Returns model + evaluation metrics.
+    a final model on all data. Returns (model, result_dict) where result_dict
+    includes cv_metrics, top_features, fold_details, training_samples, etc.
     """
+    start_time = time.time()
     df = build_training_dataset()
     X = df[FEATURE_NAMES].values
     y = df["is_true_positive"].values
+    n_samples = len(df)
+    n_tp = int(y.sum())
+    n_fp = int(len(y) - y.sum())
 
-    print(f"Training triage classifier on {len(df)} alerts "
-          f"({int(y.sum())} true positives, {int(len(y) - y.sum())} false positives)")
+    print(f"Training triage classifier on {n_samples} alerts "
+          f"({n_tp} true positives, {n_fp} false positives)")
 
     model = XGBClassifier(
         n_estimators=200,
@@ -71,6 +76,7 @@ def train_triage_model(save: bool = True) -> tuple[XGBClassifier, dict]:
 
     cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
     cv_scores = {"precision": [], "recall": [], "f1": []}
+    fold_details: list[dict[str, float]] = []
 
     for fold, (train_idx, val_idx) in enumerate(cv.split(X, y)):
         X_train, X_val = X[train_idx], X[val_idx]
@@ -83,6 +89,7 @@ def train_triage_model(save: bool = True) -> tuple[XGBClassifier, dict]:
         cv_scores["precision"].append(p)
         cv_scores["recall"].append(r)
         cv_scores["f1"].append(f1)
+        fold_details.append({"fold": fold + 1, "precision": float(p), "recall": float(r), "f1": float(f1)})
         print(f"  Fold {fold+1}: P={p:.3f} R={r:.3f} F1={f1:.3f}")
 
     metrics = {k: {"mean": np.mean(v), "std": np.std(v)} for k, v in cv_scores.items()}
@@ -99,19 +106,30 @@ def train_triage_model(save: bool = True) -> tuple[XGBClassifier, dict]:
     for feat, imp in top_features:
         print(f"  {feat}: {imp:.4f}")
 
+    training_time_ms = (time.time() - start_time) * 1000
+    serializable_metrics = {
+        k: {mk: float(mv) for mk, mv in v.items()} for k, v in metrics.items()
+    }
+    result = {
+        "cv_metrics": serializable_metrics,
+        "top_features": [[k, v] for k, v in top_features],
+        "fold_details": fold_details,
+        "training_samples": n_samples,
+        "true_positives": n_tp,
+        "false_positives": n_fp,
+        "training_time_ms": round(training_time_ms, 2),
+    }
+
     if save:
         MODEL_DIR.mkdir(parents=True, exist_ok=True)
         joblib.dump(model, MODEL_PATH)
         metrics_path = MODEL_DIR / "triage_metrics.json"
-        serializable_metrics = {
-            k: {mk: float(mv) for mk, mv in v.items()} for k, v in metrics.items()
-        }
         with open(metrics_path, "w") as f:
-            json.dump({"cv_metrics": serializable_metrics, "top_features": top_features}, f, indent=2)
+            json.dump(result, f, indent=2)
         print(f"\nModel saved to {MODEL_PATH}")
         print(f"Metrics saved to {metrics_path}")
 
-    return model, metrics
+    return model, result
 
 
 class TriageClassifier:

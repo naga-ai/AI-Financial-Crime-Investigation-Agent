@@ -368,6 +368,16 @@ def model_metrics():
         return json.load(f)
 
 
+@app.post("/api/model/train")
+def model_train():
+    """Train the XGBoost triage model, save to disk, and hot-reload the pipeline."""
+    from src.agents.triage.classifier import train_triage_model, TriageClassifier
+    _, result = train_triage_model(save=True)
+    pipeline = get_pipeline()
+    pipeline.triage = TriageClassifier()
+    return result
+
+
 # ---------------------------------------------------------------------------
 # Routes — Cache
 # ---------------------------------------------------------------------------
