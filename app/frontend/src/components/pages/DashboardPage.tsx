@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import KpiCard from '@/components/KpiCard';
 import {
-    getOverview, processAlerts, getStats,
+    getOverview, processAlerts, getStats, getApiBase,
     type Overview, type Stats,
 } from '@/lib/api';
 import {
@@ -200,6 +200,7 @@ export default function DashboardPage() {
     }
 
     if (error) {
+        const apiUrl = getApiBase();
         return (
             <div className="notice notice-error animate-fade-in">
                 <span>⚠</span>
@@ -207,7 +208,7 @@ export default function DashboardPage() {
                     <strong>Connection Error</strong><br />
                     <span style={{ fontSize: '0.78rem' }}>{error}</span><br />
                     <em style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                        Make sure the Python API is running: <code>python -m uvicorn src.api.server:app --port 8000</code>
+                        API expected at <code>{apiUrl}</code> — ensure the backend container is running and port 8000 is open.
                     </em>
                 </div>
             </div>

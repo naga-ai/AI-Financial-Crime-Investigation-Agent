@@ -3,7 +3,7 @@
  * All methods call the Python API running on port 8000.
  */
 
-function getApiBase(): string {
+export function getApiBase(): string {
   const raw = process.env.NEXT_PUBLIC_API_URL || '';
   // Valid URL must have a host (reject "http://:8000" or malformed)
   try {

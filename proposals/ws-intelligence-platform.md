@@ -149,9 +149,9 @@ WS Intelligence Platform
 
 | | URL |
 |--|-----|
-| **Frontend** | http://35.183.1.0:3000 |
-| **API** | http://35.183.1.0:8000 |
-| **API Docs** | http://35.183.1.0:8000/docs |
+| **Frontend** | http://99.79.196.110:3000 |
+| **API** | http://99.79.196.110:8000 |
+| **API Docs** | http://99.79.196.110:8000/docs |
 
 ### Dashboard Pages
 
