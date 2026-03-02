@@ -319,6 +319,30 @@ a {
   border-top: 1px solid var(--border-subtle);
 }
 
+.sidebar-author {
+  padding: 0 8px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar-author-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.sidebar-author-detail {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.sidebar-author-detail:hover {
+  color: var(--accent-teal);
+}
+
 .system-status {
   display: flex;
   align-items: center;

@@ -77,6 +77,11 @@ export default function Sidebar({ active, onNavigate }: Props) {
             ))}
 
             <div className="sidebar-footer">
+                <div className="sidebar-author">
+                    <div className="sidebar-author-name">Nagasundaram S</div>
+                    <a href="mailto:AI.Naga001@gmail.com" className="sidebar-author-detail">AI.Naga001@gmail.com</a>
+                    <a href="tel:+16476485806" className="sidebar-author-detail">647 648 5806</a>
+                </div>
                 <div className="system-status">
                     <div className={`status-dot${apiOk === false ? ' offline' : ''}`} />
                     <div className="status-text">
