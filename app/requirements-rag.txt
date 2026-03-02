@@ -1,0 +1,4 @@
+# RAG / Vector Store — installed separately with CPU-only torch
+# to avoid pulling the full CUDA PyTorch (~2.5 GB)
+chromadb>=0.4.13
+sentence-transformers>=2.2.0
