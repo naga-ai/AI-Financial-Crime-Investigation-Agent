@@ -3,22 +3,29 @@
  * All methods call the Python API running on port 8000.
  */
 
+// Internal Docker service hostnames — not resolvable from a browser
+const DOCKER_INTERNAL = new Set(['api', 'backend', 'server']);
+
 export function getApiBase(): string {
-  const raw = process.env.NEXT_PUBLIC_API_URL || '';
-  // Valid URL must have a host (reject "http://:8000" or malformed)
-  try {
-    if (raw) {
-      const u = new URL(raw.startsWith('http') ? raw : `http://${raw}`);
-      if (u.hostname && u.hostname.length > 0) return raw.startsWith('http') ? raw : `http://${raw}`;
-    }
-  } catch {
-    /* invalid */
-  }
-  // Fallback: same host as frontend, port 8000 (works for EC2 when build env was wrong)
+  // In the browser: always derive the API host from the current page host.
+  // This makes the app portable across any deployment (EC2, localhost, etc.)
+  // without needing the correct URL baked in at build time.
   if (typeof window !== 'undefined') {
-    return `${window.location.protocol}//${window.location.hostname}:8000`;
+    const { protocol, hostname } = window.location;
+    // Override only if env var points to a real public host
+    const raw = process.env.NEXT_PUBLIC_API_URL || '';
+    try {
+      if (raw) {
+        const u = new URL(raw);
+        if (u.hostname && !DOCKER_INTERNAL.has(u.hostname) && u.hostname !== 'localhost' && !u.hostname.startsWith('127.')) {
+          return raw;
+        }
+      }
+    } catch { /* ignore */ }
+    return `${protocol}//${hostname}:8000`;
   }
-  return 'http://localhost:8000';
+  // Server-side (SSR / build): use env var or localhost
+  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 }
 
 const BASE = getApiBase();
