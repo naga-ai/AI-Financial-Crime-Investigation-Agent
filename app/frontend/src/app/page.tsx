@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Sidebar from '@/components/Sidebar';
+import OverviewPage from '@/components/pages/OverviewPage';
 import DashboardPage from '@/components/pages/DashboardPage';
 import AlertQueuePage from '@/components/pages/AlertQueuePage';
 import ReportsPage from '@/components/pages/ReportsPage';
@@ -10,13 +11,14 @@ import ObsPage from '@/components/pages/ObsPage';
 import PatternsPage from '@/components/pages/PatternsPage';
 import PulsePage from '@/components/pages/PulsePage';
 
-export type Page = 'dashboard' | 'alerts' | 'reports' | 'model' | 'observability' | 'patterns' | 'pulse';
+export type Page = 'overview' | 'dashboard' | 'alerts' | 'reports' | 'model' | 'observability' | 'patterns' | 'pulse';
 
 export default function HomePage() {
-  const [page, setPage] = useState<Page>('dashboard');
+  const [page, setPage] = useState<Page>('overview');
 
   const renderPage = () => {
     switch (page) {
+      case 'overview': return <OverviewPage />;
       case 'dashboard': return <DashboardPage />;
       case 'alerts': return <AlertQueuePage />;
       case 'reports': return <ReportsPage />;
@@ -29,6 +31,7 @@ export default function HomePage() {
   };
 
   const PAGE_META: Record<Page, { title: string; subtitle: string }> = {
+    overview: { title: 'Platform Overview', subtitle: 'VP-level summary of the WS Intelligence Platform — projects, agents, architecture and business impact' },
     dashboard: { title: 'Executive Summary', subtitle: 'Real-time overview of the AI-native AML investigation pipeline' },
     alerts: { title: 'Investigation Queue', subtitle: 'Cases flagged for human review, ranked by risk score' },
     reports: { title: 'STR Report Review', subtitle: 'AI-generated Suspicious Transaction Reports — compliance officer decision required' },

@@ -5,6 +5,12 @@ import type { Page } from '@/app/page';
 
 const NAV = [
     {
+        label: 'Platform',
+        items: [
+            { id: 'overview', icon: '◉', label: 'Platform Overview' },
+        ],
+    },
+    {
         label: 'WS Clarity — Compliance',
         items: [
             { id: 'dashboard', icon: '⬡', label: 'Executive Summary' },
