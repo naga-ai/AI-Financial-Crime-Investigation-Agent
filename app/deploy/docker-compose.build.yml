@@ -1,6 +1,6 @@
-# Compose file for building images on the host (e.g. EC2). Use from repo root.
-# For CI/deploy that pulls pre-built images, use app/docker-compose.yml instead.
-version: "3.9"
+# Compose file for building images on the host (e.g. EC2).
+# Run from repo root: docker compose -f app/deploy/docker-compose.build.yml up --build -d
+# Paths are relative to this file's directory (app/deploy/).
 
 services:
   redis:
@@ -17,7 +17,7 @@ services:
 
   api:
     build:
-      context: ./app
+      context: ..
       dockerfile: Dockerfile
     image: aml-api:local
     ports:
@@ -27,12 +27,12 @@ services:
       - LLM_MODEL=gpt-4o-mini
       - LLM_TEMPERATURE=0.1
     env_file:
-      - ./app/.env
+      - ../.env
     depends_on:
       redis:
         condition: service_healthy
     volumes:
-      - ./app/models:/app/models
+      - ../models:/app/models
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8000/api/health" ]
       interval: 10s
@@ -41,7 +41,7 @@ services:
 
   frontend:
     build:
-      context: ./app/frontend
+      context: ../frontend
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
