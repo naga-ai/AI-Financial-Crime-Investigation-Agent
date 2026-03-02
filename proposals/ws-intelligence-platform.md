@@ -149,15 +149,15 @@ WS Intelligence Platform
 
 | | URL |
 |--|-----|
-| **Frontend** | http://16.52.32.66:3000 |
-| **API** | http://16.52.32.66:8000 |
-| **API Docs** | http://16.52.32.66:8000/docs |
+| **Frontend** | http://35.183.1.0:3000 |
+| **API** | http://35.183.1.0:8000 |
+| **API Docs** | http://35.183.1.0:8000/docs |
 
 ### Dashboard Pages
 
 | Section | Pages |
 |---------|-------|
-| **Platform** | Platform Overview |
+| **Platform** | Platform Overview, Architecture |
 | **WS Clarity** | Executive Summary, Investigation Queue, STR Report Review, Pattern Discovery, Model Intelligence |
 | **WS Pulse** | Pulse Intelligence |
 | **Infrastructure** | Observability and Traces |

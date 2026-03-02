@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Sidebar from '@/components/Sidebar';
 import OverviewPage from '@/components/pages/OverviewPage';
 import DashboardPage from '@/components/pages/DashboardPage';
+import ArchitecturePage from '@/components/pages/ArchitecturePage';
 import AlertQueuePage from '@/components/pages/AlertQueuePage';
 import ReportsPage from '@/components/pages/ReportsPage';
 import ModelPage from '@/components/pages/ModelPage';
@@ -11,7 +12,7 @@ import ObsPage from '@/components/pages/ObsPage';
 import PatternsPage from '@/components/pages/PatternsPage';
 import PulsePage from '@/components/pages/PulsePage';
 
-export type Page = 'overview' | 'dashboard' | 'alerts' | 'reports' | 'model' | 'observability' | 'patterns' | 'pulse';
+export type Page = 'overview' | 'architecture' | 'dashboard' | 'alerts' | 'reports' | 'model' | 'observability' | 'patterns' | 'pulse';
 
 export default function HomePage() {
   const [page, setPage] = useState<Page>('overview');
@@ -30,6 +31,7 @@ export default function HomePage() {
   const renderPage = () => {
     switch (page) {
       case 'overview': return <OverviewPage />;
+      case 'architecture': return <ArchitecturePage />;
       case 'dashboard': return <DashboardPage />;
       case 'alerts': return <AlertQueuePage />;
       case 'reports': return <ReportsPage />;
@@ -43,6 +45,7 @@ export default function HomePage() {
 
   const PAGE_META: Record<Page, { title: string; subtitle: string }> = {
     overview: { title: 'Platform Overview', subtitle: 'VP-level summary of the WS Intelligence Platform — projects, agents, architecture and business impact' },
+    architecture: { title: 'Project Architecture', subtitle: 'Agents, ML models, and data flow — one-pager diagram' },
     dashboard: { title: 'Executive Summary', subtitle: 'Real-time overview of the AI-native AML investigation pipeline' },
     alerts: { title: 'Investigation Queue', subtitle: 'Cases flagged for human review, ranked by risk score' },
     reports: { title: 'STR Report Review', subtitle: 'AI-generated Suspicious Transaction Reports — compliance officer decision required' },

@@ -9,6 +9,7 @@ const NAV = [
         label: 'Platform',
         items: [
             { id: 'overview', icon: '◉', label: 'Platform Overview' },
+            { id: 'architecture', icon: '◇', label: 'Architecture' },
         ],
     },
     {
