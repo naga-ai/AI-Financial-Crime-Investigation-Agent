@@ -1,24 +1,43 @@
 # WS Intelligence Platform
 
-> AI-Native Intelligence for Both Sides of the House — v0.1
+> AI-Native Intelligence for Both Sides of the House
 
-**WS Clarity** — Compliance Intelligence: AI that investigates so your analysts can decide.  
-**WS Pilot** — Client Financial Intelligence: AI that turns every financial moment into the right action.
+**WS Clarity** -- Compliance Intelligence: AI that investigates so your analysts can decide.
+**WS Pulse** -- Client Financial Intelligence: AI that turns every financial moment into the right action.
 
 ---
 
 ## Quick Start
 
-```bash
-# Docker (recommended — includes Redis)
-docker-compose up --build
-# Open http://localhost:8501
+### Docker (recommended -- includes Redis)
 
-# Local Python
+```bash
+cd app
+docker compose up --build -d
+
+# Frontend: http://localhost:3000
+# API docs: http://localhost:8000/docs
+```
+
+### Local Development
+
+```bash
+# 1. Backend API (port 8000)
+cd app
+python -m venv .venv
+.venv/Scripts/activate      # Windows
+# source .venv/bin/activate  # macOS/Linux
 pip install -r requirements.txt
 python scripts/generate_data.py
 python scripts/train_triage.py
-streamlit run src/dashboard/app.py
+python -m uvicorn src.api.server:app --host 0.0.0.0 --port 8000 --reload
+
+# 2. Frontend (port 3000) -- separate terminal
+cd app/frontend
+npm install
+npm run dev
+
+# Open http://localhost:3000
 ```
 
 ---
@@ -30,97 +49,35 @@ WS Intelligence Platform
 ├── WS Clarity (Compliance Intelligence)
 │   ├── Triage Agent ─────── XGBoost, 24 features, sub-2ms inference
 │   ├── Investigation Agent ─ LangGraph, 9 tools, conditional routing
-│   ├── Report Generator ──── Template + GPT-4o-mini, FINTRAC-compliant
-│   └── Pattern Discovery ─── K-Means/DBSCAN, 16 clustering features
+│   ├── Report Generator ──── GPT-4o-mini + template fallback
+│   └── Pattern Discovery ─── K-Means / DBSCAN, 10 typologies
 │
-├── WS Pilot (Client Intelligence)
-│   ├── Event Detector ────── 6 event types, priority assignment
+├── WS Pulse (Client Intelligence)
+│   ├── Event Detector ────── 6 event types, priority scoring
 │   ├── Portfolio Analyzer ── Per-user impact, tax implications
-│   ├── Recommender ────────── Personalized actions, RAG-grounded
-│   └── Narrative Agent ────── Plain-language, actionable advice
+│   ├── Recommender ────────── Personalized, RAG-grounded
+│   └── Narrative Agent ────── Plain-language advice
 │
-└── Shared Production Infrastructure
-    ├── PII Masking ────────── Field-level tokenization before LLM/cache
+└── Shared Infrastructure
+    ├── PII Masking ────────── HMAC-SHA256 tokenization
     ├── Event Queue ────────── Redis Streams, DLQ, backpressure
-    ├── Semantic Cache ──────── Multi-region TTL, Redis + in-memory fallback
-    ├── RAG ─────────────────── ChromaDB + sentence-transformers, 20 docs
-    ├── Latency Tracking ────── P50/P90/P95/P99 per pipeline component
+    ├── Semantic Cache ──────── Multi-region TTL, Redis
+    ├── RAG ─────────────────── ChromaDB + sentence-transformers
+    ├── Latency Tracking ────── P50-P99 per component
     ├── Model Scorecards ────── OSFI E-23 aligned
-    └── Observability ────────── Langfuse + local telemetry bus
+    └── Observability ────────── Langfuse + telemetry bus
 ```
 
 ---
 
-## Dashboard Navigation
+## Dashboard Pages
 
 | Section | Pages |
 |---------|-------|
-| **Home** | Platform Overview (launch both demos) |
-| **WS Clarity** | Demo & Results, Investigation Queue, STR Report Review, Pattern Discovery |
-| **WS Pilot** | Demo & Walkthrough, Portfolio Explorer, Recommendations |
-| **Infrastructure** | Architecture, Production Metrics, Model Intelligence, Knowledge Base, Observability, Cache Performance, System Health, AI Governance |
-
----
-
-## WS Clarity — Compliance Intelligence
-
-**What it does:** Automates AML alert investigation end-to-end. An analyst who once spent 45 minutes per alert can now review 10 AI-generated STR reports in the same time, with 80% of false positives already auto-closed.
-
-**Agent pipeline:**
-
-```
-Alert Ingestion
-  → Triage Agent (XGBoost, < 2ms) ─▶ AUTO-CLOSE (80% FP)
-                                   ─▶ Investigation Agent (LangGraph)
-                                         ├── gather_context
-                                         ├── analyze_transactions
-                                         ├── screen_watchlists
-                                         ├── match_typologies
-                                         ├── deep_crypto_analysis (conditional)
-                                         ├── retrieve_regulatory_context (RAG)
-                                         └── assess_risk
-                                   → Report Generator (LLM / Template)
-                                   → Human Compliance Officer (Approve / Reject / Escalate)
-                                   → FINTRAC Filing
-  → Pattern Discovery Agent (K-Means/DBSCAN, feedback loop)
-```
-
-**10 AML Typologies (FINTRAC-aligned):** Structuring, Rapid Movement, Crypto Layering, Round-Tripping, Velocity Spike, Dormant Activation, Geographic Anomaly, Third-Party Pattern, PEP/Sanctions Hit, Age-Amount Mismatch.
-
-**Synthetic data:** 500 clients · 50,464 transactions · 315 alerts · 80% false positive rate.
-
----
-
-## WS Pilot — Client Financial Intelligence
-
-**What it does:** Delivers personalized, tax-aware financial guidance to every user at sub-second speed, triggered by real financial events — paychecks, earnings reports, market moves.
-
-**Agent pipeline:**
-
-```
-Financial Event (paycheck / earnings / market drop)
-  → Event Detector (6 types, priority scoring)
-  → Portfolio Analyzer (personalized impact per user's holdings)
-  → RAG Retrieval (tax rules, investment principles, TFSA/RRSP guidance)
-  → Recommendation Agent (plain-language, tax-aware, actionable)
-  → Human Approval Gate (approve / adjust / dismiss)
-```
-
-**10 representative users:** 23yo student ($5K TFSA) → 55yo pre-retiree ($400K RRSP+TFSA). Real Canadian tickers: SHOP.TO, RY.TO, ENB.TO, VFV.TO, BTC, ETH.
-
----
-
-## Shared Production Infrastructure
-
-| Module | Purpose | Pattern |
-|--------|---------|---------|
-| `src/shared/pii.py` | Field-level PII masking before LLM/cache | Deterministic tokenization |
-| `src/shared/queue.py` | Redis Streams event queue | Priority queues, DLQ, backpressure |
-| `src/shared/latency.py` | P50–P99 latency per component | Reservoir sampling |
-| `src/shared/scorecard.py` | Model scorecards | OSFI E-23 aligned |
-| `src/cache/manager.py` | Semantic caching | Multi-region TTL, Redis + fallback |
-| `src/observability/` | Langfuse + telemetry bus | Per-span tracing |
-| `src/rag/` | FINTRAC & financial guidance | ChromaDB + sentence-transformers |
+| **Platform** | Platform Overview |
+| **WS Clarity** | Executive Summary, Investigation Queue, STR Report Review, Pattern Discovery, Model Intelligence |
+| **WS Pulse** | Pulse Intelligence |
+| **Infrastructure** | Observability and Traces |
 
 ---
 
@@ -128,16 +85,17 @@ Financial Event (paycheck / earnings / market drop)
 
 | Layer | Technology |
 |-------|-----------|
-| **Frontend Framework** | **Next.js 14** (React, TypeScript) |
-| **API Server** | **FastAPI** + **Uvicorn** |
-| Orchestration | LangGraph |
-| Triage ML | XGBoost |
-| LLM | GPT-4o-mini (optional) |
-| Clustering | scikit-learn (K-Means, DBSCAN) |
-| Observability | Langfuse + local store |
-| Caching | Redis 7 + in-memory |
+| Frontend | Next.js 14, React, TypeScript, Recharts, Vanilla CSS |
+| API Server | FastAPI + Uvicorn (Python 3.10) |
+| Orchestration | LangGraph + LangChain |
+| Triage ML | XGBoost + scikit-learn |
+| LLM | GPT-4o-mini (OpenAI) |
+| RAG | ChromaDB + sentence-transformers |
+| Observability | Langfuse + local telemetry bus |
+| Cache | Redis 7 + in-memory fallback |
 | Validation | Pydantic v2 |
-| Containers | Docker + Compose |
+| Containers | Docker + Docker Compose |
+| CI/CD | GitHub Actions → AWS EC2 (GHCR) |
 
 ---
 
@@ -145,10 +103,10 @@ Financial Event (paycheck / earnings / market drop)
 
 | Metric | Before | After |
 |--------|--------|-------|
-| AML investigation time | 45 min/case | 17 ms/case |
+| AML investigation time | 45 min / case | 17 ms / case |
 | False positive auto-close | 0% | 80% |
 | Annual AML team cost | $2M (20 FTE) | $350K (4 FTE + platform) |
-| Client portfolio insight | $300/hr advisor | $0.002/event |
+| Client portfolio insight | $300 / hr advisor | $0.002 / event |
 | Users served simultaneously | ~50 | 3M+ |
 
 ---
@@ -156,15 +114,11 @@ Financial Event (paycheck / earnings / market drop)
 ## Deployment
 
 ```bash
-# EC2 / VPS (auto-deploys on push to main via GitHub Actions)
+# Auto-deploys on push to main via GitHub Actions
 # See .github/workflows/deploy-ec2.yml
 
-# AWS CloudFormation
-aws cloudformation create-stack --stack-name ws-intelligence \
-  --template-body file://deploy/cloudformation.yaml
-
-# Local
-docker-compose up --build
+# Frontend: http://your-ec2-ip:3000
+# API docs: http://your-ec2-ip:8000/docs
 ```
 
 ---
