@@ -1,6 +1,6 @@
 # WS Intelligence Platform
 
-> AI-native intelligence for compliance and client financial guidance — two production systems on shared infrastructure.
+> Wealthsimple AI Builders Program — Two AI-native systems on shared production infrastructure. One repo, one deployment, one demo.
 
 **WS Clarity** — Compliance Intelligence: AI that investigates so your analysts can decide.  
 **WS Pulse** — Client Financial Intelligence: AI that turns every financial moment into the right action.
@@ -59,23 +59,75 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ---
 
+## WS Clarity — Compliance Intelligence
+
+Automates AML alert investigation end-to-end. A compliance analyst who once spent 45 minutes per alert can now review 10 AI-generated STR reports in the same time, with ~80% of false positives already auto-closed.
+
+**Agent Pipeline:**
+```
+Alert Ingestion
+  → Triage Agent (XGBoost, <2ms) ─▶ AUTO-CLOSE (~80% false positives)
+                                  ─▶ Investigation Agent (LangGraph)
+                                        ├── gather_context, analyze_transactions
+                                        ├── screen_watchlists, match_typologies
+                                        ├── deep_crypto_analysis, retrieve_regulatory_context (RAG)
+                                        └── assess_risk
+                                  → Report Generator (LLM / template fallback)
+                                  → Human Compliance Officer → FINTRAC Filing
+  → Pattern Discovery (K-Means / DBSCAN)
+```
+
+**What's built:** XGBoost triage (24 features, sub-2ms); LangGraph investigation (9 tool nodes); STR report generator (GPT-4o-mini + template fallback); Pattern discovery across FINTRAC typologies; UI-triggered model training with hot-reload; 500 clients, 50K+ transactions, 315 synthetic alerts.
+
+---
+
+## WS Pulse — Client Financial Intelligence
+
+Delivers personalized, tax-aware financial guidance at sub-second speed, triggered by real financial events.
+
+**Agent Pipeline:**
+```
+Financial Event (paycheck / earnings / market drop / rate change / dividend / rebalance)
+  → PII Masking → Redis Event Queue (priority-sorted)
+  → Event Detector (6 types) → Portfolio Analyzer (per-user impact, tax-aware)
+  → RAG Retrieval (TFSA/RRSP rules) → Recommendation Agent (GPT-4o-mini)
+  → Human Approval Gate
+```
+
+**What's built:** LangGraph pipeline for 6 event types; personalized portfolio analysis; RAG-grounded recommendations; 10 Canadian portfolios from $5K TFSA to $400K+; real tickers (SHOP.TO, RY.TO, VFV.TO, etc.).
+
+---
+
+## Shared Production Infrastructure
+
+Both systems share:
+
+| Component | Description |
+|-----------|-------------|
+| **PII Masking** | Field-level HMAC-SHA256 tokenization before any LLM call, cache write, or RAG query. Full audit log. |
+| **Event Queue** | Redis Streams, priority levels, consumer groups, DLQ after 3 retries, backpressure. |
+| **Semantic Cache** | Multi-region TTL (triage 1h, investigation 24h, regulatory 7d). Redis + in-memory fallback. |
+| **RAG** | ChromaDB + sentence-transformers over FINTRAC and financial principles. |
+| **Observability** | Langfuse — per-span cost, latency distribution, trace explorer. |
+| **Model Scorecards** | OSFI E-23 aligned metadata, performance metrics, bias analysis. |
+| **Latency Tracking** | P50/P90/P95/P99 per component. |
+
+---
+
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                        WS Intelligence Platform                                  │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│  WS Clarity (Compliance)                    │  WS Pulse (Client AI)              │
-│  ──────────────────────                    │  ──────────────────                │
-│  AML Alerts → Triage (XGBoost, <2ms)        │  Financial Event → PII Masking     │
-│       → Auto-close ~80% false positives     │       → Event Detector (6 types)   │
-│       → Investigation (LangGraph, 9 tools) │       → Portfolio Analyzer         │
-│       → Report Generator (GPT-4o-mini)     │       → RAG Retrieval              │
-│       → Human Review → FINTRAC Filing       │       → Recommendation Agent       │
-│  Pattern Discovery (K-Means / DBSCAN)       │       → Human Approval             │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│  Shared: Redis · ChromaDB · Langfuse · PII Masking · Model Scorecards (OSFI E-23)│
-└─────────────────────────────────────────────────────────────────────────────────┘
+WS Intelligence Platform
+├── WS Clarity (Compliance)
+│   ├── Triage Agent ─────── XGBoost, 24 features, sub-2ms
+│   ├── Investigation Agent ─ LangGraph, 9 tools
+│   ├── Report Generator ──── GPT-4o-mini + template fallback
+│   └── Pattern Discovery ─── K-Means / DBSCAN
+├── WS Pulse (Client Intelligence)
+│   ├── Event Detector ────── 6 event types, priority scoring
+│   ├── Portfolio Analyzer ── Per-user impact, tax-aware
+│   └── Recommendation Agent ─ RAG-grounded, personalized
+└── Shared: PII Masking · Event Queue · Semantic Cache · RAG · Observability · Model Scorecards
 ```
 
 ---
@@ -94,16 +146,17 @@ Open [http://localhost:3000](http://localhost:3000).
 ## Tech Stack
 
 | Layer | Technology |
-|-------|------------|
+|-------|-----------|
 | Frontend | Next.js 14, React, TypeScript, Recharts |
 | API | FastAPI, Uvicorn, Pydantic v2 |
 | Orchestration | LangGraph, LangChain |
 | Triage ML | XGBoost, scikit-learn |
+| Clustering | scikit-learn (K-Means, DBSCAN) |
 | LLM | GPT-4o-mini (OpenAI) |
 | RAG | ChromaDB, sentence-transformers |
 | Cache & Queue | Redis 7 |
 | Observability | Langfuse |
-| Deployment | Docker, AWS EC2 |
+| Deployment | Docker, GitHub Actions → GHCR, AWS EC2 |
 
 ---
 
@@ -121,9 +174,9 @@ wealthsimple/
 │   │   ├── shared/        # PII, config
 │   │   └── ...
 │   ├── scripts/           # generate_data, train
+│   ├── deploy/            # Docker Compose build, CloudFormation
 │   ├── requirements.txt
 │   └── docker-compose.yml
-├── proposals/             # Project documentation
 ├── EXPLANATION.md         # 500-word written explanation
 ├── VIDEO_SCRIPT.md        # 3-min recording script
 └── README.md
@@ -165,3 +218,7 @@ wealthsimple/
 
 **Nagasundaram S**  
 AI.Naga001@gmail.com · 647 648 5806
+
+---
+
+*Built for the Wealthsimple AI Builders Program.*
