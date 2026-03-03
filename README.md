@@ -1,6 +1,6 @@
-# WS Intelligence Platform
+# Wealthsimple Intelligence Platform
 
-> Wealthsimple AI Builders Program — Two AI-native systems on shared production infrastructure. One repo, one deployment, one demo.
+> Two AI-native systems on shared production infrastructure. One repo, one deployment, one demo.
 
 **WS Clarity** — Compliance Intelligence: AI that investigates so your analysts can decide.  
 **WS Pulse** — Client Financial Intelligence: AI that turns every financial moment into the right action.
