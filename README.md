@@ -17,48 +17,6 @@
 
 ---
 
-## Quick Start
-
-### Docker (recommended)
-
-```bash
-cd app
-docker compose up --build -d
-
-# Dashboard: http://localhost:3000
-# API: http://localhost:8000/docs
-```
-
-### Local Development
-
-**1. Backend API**
-```bash
-cd app
-python -m venv .venv
-.venv\Scripts\activate          # Windows
-# source .venv/bin/activate     # macOS/Linux
-pip install -r requirements.txt
-python scripts/generate_data.py
-python -m uvicorn src.api.server:app --host 0.0.0.0 --port 8000 --reload
-```
-
-**2. Train the triage model** (required before running the pipeline)
-```bash
-# In a separate terminal, hit the train endpoint after the API is up:
-curl -X POST http://localhost:8000/api/model/train
-```
-
-**3. Frontend**
-```bash
-cd app/frontend
-npm install
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000).
-
----
-
 ## WS Clarity — Compliance Intelligence
 
 Automates AML alert investigation end-to-end. A compliance analyst who once spent 45 minutes per alert can now review 10 AI-generated STR reports in the same time, with ~80% of false positives already auto-closed.
@@ -211,6 +169,49 @@ wealthsimple/
 - **Docker Compose**: `cd app && docker compose up -d`
 - **AWS EC2**: Deploy via `app/deploy/`. Ensure Redis, API, and frontend are running. Generate data and train the model on first deploy.
 - **CI/CD**: GitHub Actions → GHCR. See `.github/workflows/`.
+
+---
+
+
+## Quick Start
+
+### Docker (recommended)
+
+```bash
+cd app
+docker compose up --build -d
+
+# Dashboard: http://localhost:3000
+# API: http://localhost:8000/docs
+```
+
+### Local Development
+
+**1. Backend API**
+```bash
+cd app
+python -m venv .venv
+.venv\Scripts\activate          # Windows
+# source .venv/bin/activate     # macOS/Linux
+pip install -r requirements.txt
+python scripts/generate_data.py
+python -m uvicorn src.api.server:app --host 0.0.0.0 --port 8000 --reload
+```
+
+**2. Train the triage model** (required before running the pipeline)
+```bash
+# In a separate terminal, hit the train endpoint after the API is up:
+curl -X POST http://localhost:8000/api/model/train
+```
+
+**3. Frontend**
+```bash
+cd app/frontend
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
 
 ---
 
