@@ -44,8 +44,10 @@ services:
       context: ../frontend
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+        # Use Docker service name for SSR; client uses window.location in browser
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://api:8000}
     image: aml-frontend:local
+    hostname: frontend
     ports:
       - "3000:3000"
     depends_on:
