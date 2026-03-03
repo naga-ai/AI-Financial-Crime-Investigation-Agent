@@ -428,6 +428,14 @@ a {
   gap: 12px;
 }
 
+/* ─── Overview page: no header title, tighter layout ───────────────── */
+.main-content[data-page="overview"] .topbar {
+  height: 48px;
+}
+.main-content[data-page="overview"] .page-body {
+  padding-top: 20px;
+}
+
 /* ─── Page Body ───────────────────────────────────────────────────── */
 .page-body {
   padding: 28px 32px;

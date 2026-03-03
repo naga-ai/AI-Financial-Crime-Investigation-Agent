@@ -44,7 +44,7 @@ export default function HomePage() {
   };
 
   const PAGE_META: Record<Page, { title: string; subtitle: string }> = {
-    overview: { title: 'Platform Overview', subtitle: 'VP-level summary of the WS Intelligence Platform — projects, agents, architecture and business impact' },
+    overview: { title: '', subtitle: '' },
     architecture: { title: 'Project Architecture', subtitle: 'Agents, ML models, and data flow — one-pager diagram' },
     dashboard: { title: 'Executive Summary', subtitle: 'Real-time overview of the AI-native AML investigation pipeline' },
     alerts: { title: 'Investigation Queue', subtitle: 'Cases flagged for human review, ranked by risk score' },
@@ -65,12 +65,16 @@ export default function HomePage() {
 
       <Sidebar active={page} onNavigate={setPage} />
 
-      <main className="main-content">
+      <main className="main-content" data-page={page}>
         <header className="topbar">
-          <div className="topbar-left">
-            <h1>{meta.title}</h1>
-            <p>{meta.subtitle}</p>
-          </div>
+          {meta.title ? (
+            <div className="topbar-left">
+              <h1>{meta.title}</h1>
+              <p>{meta.subtitle}</p>
+            </div>
+          ) : (
+            <div className="topbar-left" />
+          )}
           <div className="topbar-right">
             <span className="badge badge-green" style={{ fontSize: '0.7rem' }}>
               ● LIVE
