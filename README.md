@@ -216,9 +216,4 @@ wealthsimple/
 
 ## Contact
 
-**Nagasundaram S**  
-AI.Naga001@gmail.com · 647 648 5806
-
----
-
-*Built for the Wealthsimple AI Builders Program.*
+AI.Naga001@gmail.com
