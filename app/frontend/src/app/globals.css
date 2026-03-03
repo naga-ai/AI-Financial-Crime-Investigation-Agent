@@ -432,6 +432,10 @@ a {
 .main-content[data-page="overview"] .topbar {
   height: 48px;
 }
+.main-content[data-page="overview"] .topbar .topbar-left h1,
+.main-content[data-page="overview"] .topbar .topbar-left p {
+  display: none; /* ensure no title/subtitle on overview */
+}
 .main-content[data-page="overview"] .page-body {
   padding-top: 20px;
 }
